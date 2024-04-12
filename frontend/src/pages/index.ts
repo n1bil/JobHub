@@ -3,7 +3,7 @@ export { default as Landing } from './landing/Landing';
 export { default as HomeLayout } from './HomeLayout';
 export { default as Register } from './Register';
 export { default as Login } from './Login';
-export { default as Error } from './Error';
+export { default as Error } from './error/Error';
 export { default as Stats } from './Stats';
 export { default as AllJobs } from './AllJobs';
 export { default as AddJob } from './AddJob';
