@@ -1,8 +1,12 @@
 import logo from "../assets/images/logo.svg";
 
-const Logo = () => {
+type Props = {
+    classname: string;
+}
+
+const Logo = ({ classname }: Props) => {
     return (
-        <img src={logo} alt="jobhub" className='logo' />
+        <img src={logo} alt="jobhub" className={classname} />
     )
 };
 

@@ -1,7 +1,7 @@
 type Props = {
     type: string;
     name: string;
-    labelText: string;
+    labelText?: string;
 }
 
 const FormRow = ({ type, name, labelText }: Props) => {
