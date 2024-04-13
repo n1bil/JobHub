@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import styles from "./Login.module.css";
 import Wrapper from "../../assets/wrappers/RegisterAndLoginPage";
 
-import { FormRow, Logo } from "../../components";
+import { SmallSidebar, Logo } from "../../components";
 
 const Login = () => {
     return (
@@ -10,8 +10,8 @@ const Login = () => {
             <form className={`form ${styles.form}`}>
                 <Logo classname={styles.logo} />
                 <h4>login</h4>
-                <FormRow type="email" name="email" />
-                <FormRow type="password" name="password" />
+                <SmallSidebar type="email" name="email" />
+                <SmallSidebar type="password" name="password" />
                 <button type="submit" className={`btn btn-block ${styles.btn}`}>Submit</button>
                 <p>
                     Not a member yet ?
