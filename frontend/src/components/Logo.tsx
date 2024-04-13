@@ -1,13 +1,7 @@
 import logo from "../assets/images/logo.svg";
 
-type Props = {
-    classname: string;
-}
-
-const Logo = ({ classname }: Props) => {
-    return (
-        <img src={logo} alt="jobhub" className={classname} />
-    )
-};
+const Logo = () => {
+    return <img src={logo} alt='jobify' className='logo' />;
+  };
 
 export default Logo;
