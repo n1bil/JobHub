@@ -4,7 +4,7 @@ import { BigSidebar, Navbar, SmallSidebar } from "../components";
 import { createContext, useContext, useState } from "react";
 
 const DashboardContext = createContext({
-    user: {},
+    user: { name: '' },
     showSidebar: false,
     isDarkTheme: false,
     toggleDarkTheme: () => {},
