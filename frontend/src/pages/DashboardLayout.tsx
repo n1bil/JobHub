@@ -2,9 +2,10 @@ import { Outlet } from "react-router-dom";
 import Wrapper from "../assets/wrappers/Dashboard";
 import { BigSidebar, Navbar, SmallSidebar } from "../components";
 import { createContext, useContext, useState } from "react";
+import { checkDefaultTheme } from "../App";
 
 const DashboardContext = createContext({
-    user: { name: '' },
+    user: { name: "" },
     showSidebar: false,
     isDarkTheme: false,
     toggleDarkTheme: () => {},
@@ -16,10 +17,13 @@ const DashboardLayout = () => {
     // temp
     const user = { name: "John" };
     const [showSidebar, setShowSidebar] = useState(false);
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
+    const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme());
 
     const toggleDarkTheme = () => {
-        console.log("Toggle dark theme");
+        const newDarkTheme = !isDarkTheme;
+        setIsDarkTheme(newDarkTheme);
+        document.body.classList.toggle("dark-theme", newDarkTheme);
+        localStorage.setItem("darkTheme", JSON.stringify(newDarkTheme));
     };
 
     const toggleSideBar = () => {
@@ -31,7 +35,16 @@ const DashboardLayout = () => {
     };
 
     return (
-        <DashboardContext.Provider value={{user, showSidebar, isDarkTheme, toggleDarkTheme, toggleSideBar, logoutUser}}>
+        <DashboardContext.Provider
+            value={{
+                user,
+                showSidebar,
+                isDarkTheme,
+                toggleDarkTheme,
+                toggleSideBar,
+                logoutUser,
+            }}
+        >
             <Wrapper>
                 <main className="dashboard">
                     <SmallSidebar />
