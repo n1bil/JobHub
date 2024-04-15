@@ -4,7 +4,7 @@ import com.example.backend.dto.JobRequestDTO;
 import com.example.backend.dto.JobResponseDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.service.JobService;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class JobController {
     }
 
     @PostMapping()
-    public ResponseEntity<JobResponseDTO> addJob(@RequestBody JobRequestDTO jobRequest) {
+    public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobRequestDTO jobRequest) {
         JobResponseDTO createdJob = jobService.createJob(jobRequest);
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
