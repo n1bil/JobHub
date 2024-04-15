@@ -1,12 +1,12 @@
 package com.example.backend.mapper;
 
-import com.example.backend.dto.JobRequestDTO;
+import com.example.backend.dto.JobCreateRequestDTO;
 import com.example.backend.dto.JobResponseDTO;
 import com.example.backend.entity.Job;
 
 public class JobMapper {
 
-    public Job mapToJob(JobRequestDTO jobRequestDTO) {
+    public Job mapToJob(JobCreateRequestDTO jobRequestDTO) {
         return Job.builder()
                 .company(jobRequestDTO.getCompany())
                 .position(jobRequestDTO.getPosition())

@@ -1,7 +1,8 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.JobRequestDTO;
+import com.example.backend.dto.JobCreateRequestDTO;
 import com.example.backend.dto.JobResponseDTO;
+import com.example.backend.dto.JobUpdateRequestDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.service.JobService;
 import jakarta.validation.Valid;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +19,6 @@ import java.util.Optional;
 @RequestMapping("/api/v1/jobs")
 public class JobController {
     private static final Logger logger = LoggerFactory.getLogger(JobController.class);
-    private List<Job> jobs = new ArrayList<>();
-
     private JobService jobService;
 
     public JobController(JobService jobService) {
@@ -36,7 +34,7 @@ public class JobController {
     }
 
     @PostMapping()
-    public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobRequestDTO jobRequest) {
+    public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
         JobResponseDTO createdJob = jobService.createJob(jobRequest);
         logger.info("Job created: {}", createdJob);
 
@@ -52,34 +50,17 @@ public class JobController {
     }
 
     @PutMapping("/{job_id}")
-    public ResponseEntity<?> editJobById(@RequestBody Job requestJob,
+    public ResponseEntity<JobResponseDTO> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
                                          @PathVariable String job_id) {
-        Optional<Job> optionalJob = jobs.stream()
-                .filter(job -> job.getId().equals(job_id))
-                .findFirst();
-
-        if (optionalJob.isPresent()) {
-            Job jobToUpdate = optionalJob.get();
-            jobToUpdate.setCompany(requestJob.getCompany());
-            jobToUpdate.setPosition(requestJob.getPosition());
-            return ResponseEntity.ok(jobToUpdate);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        JobResponseDTO jobResponseDTO = jobService.updateJobById(requestJob, job_id);
+        return new ResponseEntity<>(jobResponseDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{job_id}")
     public ResponseEntity<String> deleteJobById(@PathVariable String job_id) {
-        Optional<Job> optionalJob = jobs.stream()
-                .filter(job -> job.getId().equals(job_id))
-                .findFirst();
+        jobService.deleteJobById(job_id);
 
-        if (optionalJob.isPresent()) {
-            jobs.remove(optionalJob.get());
-            return ResponseEntity.ok("Job with id " + job_id + " successfully deleted");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return new ResponseEntity<>("Job entity was deleted successfully", HttpStatus.OK);
     }
 
 
