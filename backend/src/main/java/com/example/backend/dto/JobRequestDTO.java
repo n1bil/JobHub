@@ -1,6 +1,7 @@
 package com.example.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 @Getter
@@ -12,9 +13,9 @@ import lombok.*;
 @Builder
 public class JobRequestDTO {
 
-    @NotBlank(message = "Company must be filled")
+    @NotEmpty(message = "Company must be filled")
     private String company;
-    @NotBlank(message = "Position must be filled")
+    @NotEmpty(message = "Position must be filled")
     private String position;
     private String jobStatus = "pending";
     private String jobType = "full-time";
