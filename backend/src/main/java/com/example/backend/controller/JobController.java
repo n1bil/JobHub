@@ -28,32 +28,27 @@ public class JobController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Job>> getJobs() {
-        logger.info("Retrieved {} jobs", jobs.size());
+    public ResponseEntity<List<JobResponseDTO>> getJobs() {
+        List<JobResponseDTO> allJobs = jobService.getAllJobs();
+        logger.info("All jobs: {}", allJobs.size());
 
-        return ResponseEntity.ok(jobs);
+        return ResponseEntity.ok(allJobs);
     }
 
     @PostMapping()
     public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobRequestDTO jobRequest) {
         JobResponseDTO createdJob = jobService.createJob(jobRequest);
+        logger.info("Job created: {}", createdJob);
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
 
     @GetMapping("/{job_id}")
-    public ResponseEntity<?> getJobById(@PathVariable String job_id) {
-        Optional<Job> optionalJob = jobs.stream()
-                .filter(job -> job.getId().equals(job_id))
-                .findFirst();
+    public ResponseEntity<JobResponseDTO> getJobById(@PathVariable String job_id) {
+        JobResponseDTO receivedJob = jobService.getJob(job_id);
 
-        if (optionalJob.isPresent()) {
-            Job job = optionalJob.get();
-            logger.info("Retrieved job with id {}: {}", job_id, job);
-            return ResponseEntity.ok(job);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        logger.info("Received Job: {}", receivedJob);
+        return ResponseEntity.ok(receivedJob);
     }
 
     @PutMapping("/{job_id}")
