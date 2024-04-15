@@ -3,14 +3,19 @@ package com.example.backend.mapper;
 import com.example.backend.dto.UserRequestDTO;
 import com.example.backend.dto.UserResponseDTO;
 import com.example.backend.entity.User;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+@AllArgsConstructor
 public class UserMapper {
+
+    private PasswordEncoder passwordEncoder;
 
     public User mapToUser(UserRequestDTO userRequest) {
         return User.builder()
                 .name(userRequest.getName())
                 .lastName(userRequest.getLastName())
-                .password(userRequest.getPassword())
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .email(userRequest.getEmail())
                 .location(userRequest.getLocation())
                 .role(userRequest.getRole())
