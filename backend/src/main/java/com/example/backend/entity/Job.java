@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+import static com.example.backend.utils.Utils.isValidJobStatus;
+import static com.example.backend.utils.Utils.isValidJobType;
+
 @Document(collection = "jobs")
 @Getter
 @Setter
@@ -40,10 +43,6 @@ public class Job {
         }
     }
 
-    private boolean isValidJobStatus(String status) {
-        return status.equals("interview") || status.equals("declined") || status.equals("pending");
-    }
-
     public void setJobType(String jobType) {
         if (isValidJobType(jobType)) {
             this.jobType = jobType;
@@ -52,7 +51,4 @@ public class Job {
         }
     }
 
-    private boolean isValidJobType(String type) {
-        return type.equals("full-time") || type.equals("part-time") || type.equals("internship");
-    }
 }

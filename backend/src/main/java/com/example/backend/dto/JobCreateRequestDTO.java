@@ -18,11 +18,12 @@ public class JobCreateRequestDTO {
     private String company;
 
     @NotEmpty(message = "Position title is required")
-    @Size(min = 3, max = 20, message = "Position title must be between 3 and 20 characters")
-
     private String position;
+
     private String jobStatus = "pending";
     private String jobType = "full-time";
+
+    @NotEmpty(message = "Job location is required")
     private String jobLocation = "my-city";
 
 }
