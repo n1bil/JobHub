@@ -1,7 +1,7 @@
 package com.example.backend.mapper;
 
-import com.example.backend.dto.JobCreateRequestDTO;
-import com.example.backend.dto.JobResponseDTO;
+import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
+import com.example.backend.dto.jobDTO.JobResponseDTO;
 import com.example.backend.entity.Job;
 
 public class JobMapper {

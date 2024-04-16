@@ -1,4 +1,4 @@
-package com.example.backend.dto;
+package com.example.backend.dto.jobDTO;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -6,8 +6,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -1,7 +1,7 @@
 package com.example.backend.mapper;
 
-import com.example.backend.dto.UserRequestDTO;
-import com.example.backend.dto.UserResponseDTO;
+import com.example.backend.dto.userDTO.UserRequestDTO;
+import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

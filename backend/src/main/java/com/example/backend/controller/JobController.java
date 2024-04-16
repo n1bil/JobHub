@@ -1,9 +1,8 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.JobCreateRequestDTO;
-import com.example.backend.dto.JobResponseDTO;
-import com.example.backend.dto.JobUpdateRequestDTO;
-import com.example.backend.entity.Job;
+import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
+import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.backend.service.JobService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/jobs")

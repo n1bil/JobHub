@@ -1,4 +1,4 @@
-package com.example.backend.dto;
+package com.example.backend.dto.jobDTO;
 
 import lombok.*;
 
@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

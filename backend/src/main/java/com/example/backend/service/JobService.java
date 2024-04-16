@@ -1,8 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.JobCreateRequestDTO;
-import com.example.backend.dto.JobResponseDTO;
-import com.example.backend.dto.JobUpdateRequestDTO;
+import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
+import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 
 import java.util.List;
 

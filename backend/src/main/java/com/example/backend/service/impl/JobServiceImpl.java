@@ -1,8 +1,8 @@
 package com.example.backend.service.impl;
 
-import com.example.backend.dto.JobCreateRequestDTO;
-import com.example.backend.dto.JobResponseDTO;
-import com.example.backend.dto.JobUpdateRequestDTO;
+import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
+import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.JobMapper;

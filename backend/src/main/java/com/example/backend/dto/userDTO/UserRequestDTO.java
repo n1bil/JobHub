@@ -1,4 +1,4 @@
-package com.example.backend.dto;
+package com.example.backend.dto.userDTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,8 +7,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

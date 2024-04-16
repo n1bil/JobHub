@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.UserRequestDTO;
-import com.example.backend.dto.UserResponseDTO;
+import com.example.backend.dto.AuthDTO.AuthRequestDTO;
+import com.example.backend.dto.AuthDTO.AuthResponseDTO;
+import com.example.backend.dto.userDTO.UserRequestDTO;
+import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,14 @@ public class AuthController {
         UserResponseDTO registeredUser = userService.register(userRequest);
 
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO loginDto) {
+        AuthResponseDTO authResponse = userService.login(loginDto);
+
+
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
 }
