@@ -1,6 +1,6 @@
 package com.example.backend.utils;
 
-public class Utils {
+public class ValidUtils {
 
     public static boolean isValidJobStatus(String status) {
         return status.equals("interview") || status.equals("declined") || status.equals("pending");

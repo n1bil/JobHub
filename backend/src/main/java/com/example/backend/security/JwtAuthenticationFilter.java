@@ -2,6 +2,7 @@ package com.example.backend.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -28,27 +29,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-       String token = getTokenFromRequest(request);
+        String token = getTokenFromHeader(request);
 
-       if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-           String username = tokenProvider.getUsername(token);
+        if (token == null) {
+            token = getTokenFromCookie(request);
+        }
 
-           UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+            String username = tokenProvider.getUsername(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
 
-           UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-           authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-           SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-       }
-
-       filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
+    private String getTokenFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
+
+    private String getTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }
+

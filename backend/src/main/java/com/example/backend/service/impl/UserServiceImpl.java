@@ -62,12 +62,11 @@ public class UserServiceImpl implements UserService {
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
         String token = jwtTokenProvider.generateToken(authentication);
 
+
         AuthResponseDTO jwtAuthResponse = new AuthResponseDTO();
-        jwtAuthResponse.setAccessToken(jwtTokenProvider.generateToken(authentication));
+        jwtAuthResponse.setAccessToken(token);
         return jwtAuthResponse;
     }
 }

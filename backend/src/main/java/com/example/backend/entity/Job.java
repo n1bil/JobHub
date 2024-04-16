@@ -4,12 +4,13 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-import static com.example.backend.utils.Utils.isValidJobStatus;
-import static com.example.backend.utils.Utils.isValidJobType;
+import static com.example.backend.utils.ValidUtils.isValidJobStatus;
+import static com.example.backend.utils.ValidUtils.isValidJobType;
 
 @Document(collection = "jobs")
 @Getter
@@ -28,6 +29,9 @@ public class Job {
     private String jobStatus;
     private String jobType;
     private String jobLocation;
+
+    @DBRef
+    private User createdBy;
 
     @CreatedDate
     private LocalDateTime createdAt;
