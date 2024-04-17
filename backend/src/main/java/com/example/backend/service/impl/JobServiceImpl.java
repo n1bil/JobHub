@@ -11,9 +11,11 @@ import com.example.backend.repository.JobRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,18 +55,33 @@ public class JobServiceImpl implements JobService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
-        List<Job> jobs = jobRepository.findAllByCreatedBy(user.getId());
 
-        return jobs.stream()
-                .map(jobMapper::mapToJobResponseDTO)
-                .collect(Collectors.toList());
+        if (user.getRole().equals("admin")) {
+            return jobRepository.findAll().stream()
+                    .map(jobMapper::mapToJobResponseDTO)
+                    .collect(Collectors.toList());
+        } else {
+            List<Job> jobs = jobRepository.findAllByCreatedBy(user.getId());
+
+            return jobs.stream()
+                    .map(jobMapper::mapToJobResponseDTO)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
     public JobResponseDTO getJob(String jobId) {
-        return jobRepository.findById(jobId)
-                .map(jobMapper::mapToJobResponseDTO)
-                .orElseThrow(() -> new NotFoundException("Job with id '" + jobId + "' not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job with id " + jobId + " not found"));
+
+
+        if (user.getId().equals(foundJob.getCreatedBy().getId())) {
+            return jobMapper.mapToJobResponseDTO(foundJob);
+        } else {
+            throw new AccessDeniedException("You do not have permission to access this job");
+        }
     }
 
     @Override
