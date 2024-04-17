@@ -25,7 +25,7 @@ public class JobController {
 
     @GetMapping()
     public ResponseEntity<List<JobResponseDTO>> getJobs() {
-        List<JobResponseDTO> allJobs = jobService.getAllJobs();
+        List<JobResponseDTO> allJobs = jobService.getAllJobsByUser();
         logger.info("All jobs: {}", allJobs.size());
 
         return ResponseEntity.ok(allJobs);

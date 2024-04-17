@@ -24,6 +24,7 @@ public class JobMapper {
                 .jobType(job.getJobType())
                 .jobStatus(job.getJobStatus())
                 .position(job.getPosition())
+                .createdBy(job.getCreatedBy().getId())
                 .createdAt(job.getCreatedAt())
                 .updatedAt(job.getUpdatedAt())
                 .build();

@@ -4,14 +4,19 @@ import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
 import com.example.backend.dto.jobDTO.JobResponseDTO;
 import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.backend.entity.Job;
+import com.example.backend.entity.User;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.JobMapper;
 import com.example.backend.repository.JobRepository;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,25 +24,38 @@ public class JobServiceImpl implements JobService {
 
     private JobRepository jobRepository;
     private JobMapper jobMapper;
+    private UserRepository userRepository;
 
     @Autowired
-    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper) {
+    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper, UserRepository userRepository) {
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
     public JobResponseDTO createJob(JobCreateRequestDTO jobRequestDTO) {
-        Job job = jobMapper.mapToJob(jobRequestDTO);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
 
+        User foundUser = userRepository.findByEmail(email).orElseThrow(() ->
+                                            new NotFoundException("User with email " + email + " not found"));
+
+        Job job = jobMapper.mapToJob(jobRequestDTO);
+        job.setCreatedBy(foundUser);
         Job savedJob = jobRepository.save(job);
 
         return jobMapper.mapToJobResponseDTO(savedJob);
     }
 
     @Override
-    public List<JobResponseDTO> getAllJobs() {
-        return jobRepository.findAll().stream()
+    public List<JobResponseDTO> getAllJobsByUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        List<Job> jobs = jobRepository.findAllByCreatedBy(user.getId());
+
+        return jobs.stream()
                 .map(jobMapper::mapToJobResponseDTO)
                 .collect(Collectors.toList());
     }
