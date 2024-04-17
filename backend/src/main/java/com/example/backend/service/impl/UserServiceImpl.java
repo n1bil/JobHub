@@ -1,91 +1,72 @@
 package com.example.backend.service.impl;
 
-import com.example.backend.dto.AuthDTO.AuthRequestDTO;
-import com.example.backend.dto.AuthDTO.AuthResponseDTO;
+import com.example.backend.dto.UsersJobsResponse;
 import com.example.backend.dto.userDTO.UserRequestDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
+import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
+import com.example.backend.entity.Job;
 import com.example.backend.entity.User;
-import com.example.backend.exception.APIException;
+import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.UserMapper;
-import com.example.backend.repository.UserRepository;
-import com.example.backend.security.JwtTokenProvider;
+import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value("${admin.email}")
-    private String email;
-    private UserRepository userRepository;
+    private AuthRepository authRepository;
     private UserMapper userMapper;
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
-                           AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(AuthRepository authRepository, UserMapper userMapper, MongoTemplate mongoTemplate) {
+        this.authRepository = authRepository;
         this.userMapper = userMapper;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.mongoTemplate = mongoTemplate;
     }
 
-    @Override
-    public UserResponseDTO register(UserRequestDTO userRequest) {
-        if (userRepository.existsUserByEmail(userRequest.getEmail())) {
-            throw new APIException(HttpStatus.BAD_REQUEST, "Email is already exists");
-        }
-
-        User user = userMapper.mapToUser(userRequest);
-
-        if ((userRequest.getEmail()).equals(email)) {
-            user.setRole("admin");
-        }
-
-        userRepository.save(user);
+    public UserResponseDTO getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = authRepository.findByEmail(email).orElseThrow(() ->
+                                        new NotFoundException("User with email " + email + " not found"));
 
         return userMapper.mapToResponseDTO(user);
     }
 
     @Override
-    public AuthResponseDTO login(AuthRequestDTO authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authRequest.getEmail(), authRequest.getPassword()
-        ));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    public UserResponseDTO updateUser(UserUpdateRequestDTO userUpdateRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = authRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException("User with email " + email + " not found"));
 
-        String token = jwtTokenProvider.generateToken(authentication);
+        user.setName(userUpdateRequest.getName());
+        user.setLastName(userUpdateRequest.getLastName());
+        user.setPassword(userUpdateRequest.getPassword());
+        user.setLocation(userUpdateRequest.getLocation());
 
+        authRepository.save(user);
 
-        AuthResponseDTO jwtAuthResponse = new AuthResponseDTO();
-        jwtAuthResponse.setAccessToken(token);
-        return jwtAuthResponse;
+        return userMapper.mapToResponseDTO(user);
+    }
+
+    @Override
+    public UsersJobsResponse getApplicationStats() {
+        long userCount = mongoTemplate.count(new Query(), User.class);
+        long jobCount = mongoTemplate.count(new Query(), Job.class);
+
+        UsersJobsResponse usersJobsResponse = new UsersJobsResponse();
+        usersJobsResponse.setUsers(userCount);
+        usersJobsResponse.setJobs(jobCount);
+
+        return usersJobsResponse;
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

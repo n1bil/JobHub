@@ -1,7 +1,7 @@
 package com.example.backend.security;
 
 import com.example.backend.entity.User;
-import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.AuthRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +15,9 @@ import java.util.Set;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private AuthRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(AuthRepository userRepository) {
         this.userRepository = userRepository;
     }
 

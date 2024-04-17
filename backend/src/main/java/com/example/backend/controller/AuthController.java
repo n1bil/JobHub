@@ -4,7 +4,7 @@ import com.example.backend.dto.AuthDTO.AuthRequestDTO;
 import com.example.backend.dto.AuthDTO.AuthResponseDTO;
 import com.example.backend.dto.userDTO.UserRequestDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
-import com.example.backend.service.UserService;
+import com.example.backend.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -13,20 +13,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping
 public class AuthController {
 
-    private UserService userService;
+    private AuthService userService;
 
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(AuthService userService) {
         this.userService = userService;
     }
 

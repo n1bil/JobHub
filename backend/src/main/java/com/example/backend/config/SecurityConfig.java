@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
+                        .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
+                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("admin")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -78,32 +80,3 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
-
-/*
-@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(cors -> configurationSource())
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
-                        .requestMatchers(HttpMethod.POST, "/logout").permitAll() // Разрешаем POST запросы на /logout
-                        .anyRequest().authenticated())
-                .logout() // Настройка выхода
-                .logoutUrl("/logout") // Указываем URL для выполнения выхода
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    response.setStatus(HttpStatus.OK.value()); // Устанавливаем статус ответа 200 OK
-                })
-                .invalidateHttpSession(true) // Указываем, что необходимо завершить HTTP-сеанс при выходе из системы
-                .deleteCookies("token") // Указываем, какие куки следует удалить при выходе из системы
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
- */

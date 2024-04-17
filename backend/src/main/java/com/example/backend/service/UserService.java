@@ -1,14 +1,14 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.AuthDTO.AuthRequestDTO;
-import com.example.backend.dto.AuthDTO.AuthResponseDTO;
-import com.example.backend.dto.userDTO.UserRequestDTO;
+import com.example.backend.dto.UsersJobsResponse;
 import com.example.backend.dto.userDTO.UserResponseDTO;
+import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
 
 public interface UserService {
 
-    UserResponseDTO register(UserRequestDTO userRequest);
+    UserResponseDTO getCurrentUser();
 
-    AuthResponseDTO login(AuthRequestDTO loginDto);
+    UserResponseDTO updateUser(UserUpdateRequestDTO userUpdateRequest);
 
+    UsersJobsResponse getApplicationStats();
 }

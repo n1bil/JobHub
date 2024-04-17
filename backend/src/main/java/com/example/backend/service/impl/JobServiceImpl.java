@@ -8,17 +8,15 @@ import com.example.backend.entity.User;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.JobMapper;
 import com.example.backend.repository.JobRepository;
-import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +24,10 @@ public class JobServiceImpl implements JobService {
 
     private JobRepository jobRepository;
     private JobMapper jobMapper;
-    private UserRepository userRepository;
+    private AuthRepository userRepository;
 
     @Autowired
-    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper, UserRepository userRepository) {
+    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper, AuthRepository userRepository) {
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
         this.userRepository = userRepository;
