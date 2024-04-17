@@ -43,6 +43,7 @@ public class AuthController {
         Cookie cookie = new Cookie("token", authResponse.getAccessToken());
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
         Map<String, String> responseBody = new HashMap<>();

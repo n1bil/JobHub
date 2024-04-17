@@ -1,9 +1,12 @@
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -39,7 +43,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout((logout) -> logout.logoutUrl("/logout")
+                        .deleteCookies("token")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpStatus.OK.value());
+                            response.setContentType("application/json");
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            String responseBody = objectMapper.writeValueAsString(Collections.singletonMap("message", "User logged out"));
+                            response.getWriter().write(responseBody);
+                        }));
 
         return http.build();
     }
@@ -65,3 +78,32 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
+
+/*
+@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> configurationSource())
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
+                        .requestMatchers(HttpMethod.POST, "/logout").permitAll() // Разрешаем POST запросы на /logout
+                        .anyRequest().authenticated())
+                .logout() // Настройка выхода
+                .logoutUrl("/logout") // Указываем URL для выполнения выхода
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpStatus.OK.value()); // Устанавливаем статус ответа 200 OK
+                })
+                .invalidateHttpSession(true) // Указываем, что необходимо завершить HTTP-сеанс при выходе из системы
+                .deleteCookies("token") // Указываем, какие куки следует удалить при выходе из системы
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+ */
