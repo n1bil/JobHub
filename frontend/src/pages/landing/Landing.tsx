@@ -8,7 +8,7 @@ const Landing = () => {
     return (
         <Wrapper>
             <nav className={styles.nav}>
-                <Logo classname={""} />
+                <Logo />
             </nav>
             <div className={`container ${styles.page}`}>
                 <div className={styles.info}>
