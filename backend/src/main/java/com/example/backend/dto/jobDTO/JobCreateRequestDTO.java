@@ -18,10 +18,10 @@ public class JobCreateRequestDTO {
     @NotEmpty(message = "Position title is required")
     private String position;
 
-    private String jobStatus = "pending";
-    private String jobType = "full-time";
+    private String jobStatus;
+    private String jobType;
 
     @NotEmpty(message = "Job location is required")
-    private String jobLocation = "my-city";
+    private String jobLocation;
 
 }
