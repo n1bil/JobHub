@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
@@ -39,5 +42,13 @@ public class UserController {
         UsersJobsResponse applicationStats = userService.getApplicationStats();
 
         return new ResponseEntity<>(applicationStats, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/test")
+    public ResponseEntity<Map<String, String>> test() {
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "test route");
+
+        return ResponseEntity.ok(responseBody);
     }
 }

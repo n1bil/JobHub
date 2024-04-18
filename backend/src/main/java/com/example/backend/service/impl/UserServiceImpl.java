@@ -1,7 +1,6 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.UsersJobsResponse;
-import com.example.backend.dto.userDTO.UserRequestDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
 import com.example.backend.entity.Job;
