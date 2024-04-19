@@ -1,6 +1,6 @@
 import { FormRow, FormRowSelect } from "../components";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
-import { useLoaderData } from "react-router-dom";
+import { ActionFunction, useLoaderData } from "react-router-dom";
 import { JOB_STATUS, JOB_TYPE } from "../utils/constants";
 import { Form, useNavigation, redirect } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,14 +8,7 @@ import customFetch from "../utils/customFetch";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
 import { Job } from "../utils/JobAbstract";
 
-type Props = {
-    request: Request;
-    params: {
-        id: string;
-    };
-};
-
-export const loader = async ({ params }: Props) => {
+export const loader: ActionFunction = async ({ params }) => {
     try {
         const { data } = await customFetch.get(`/jobs/${params.id}`);
         return data;
@@ -25,8 +18,7 @@ export const loader = async ({ params }: Props) => {
     }
 };
 
-export const action = async ({ request, params }: Props) => {
-    console.log(params);
+export const action: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
     try {

@@ -1,17 +1,12 @@
-import { redirect } from "react-router-dom";
+import { ActionFunction, redirect } from "react-router-dom";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 
-type Props = {
-    params: {
-        id: string;
-    };
-};
-
-export const action = async ({ params }: Props) => {
+export const action: ActionFunction = async ({ params }) => {
     try {
-        await customFetch.delete(`/jobs/${params.id}`);
+        const { id } = params;
+        await customFetch.delete(`/jobs/${id}`);
         toast.success("Job deleted successfully");
     } catch (error) {
         handleError(error as CustomAxiosError);
