@@ -17,7 +17,6 @@ type Props = {
 }
 
 const Job = ({ id, position, company, jobLocation, jobType, createdAt, jobStatus }: Props) => {
-    console.log(createdAt);
     const date = day(createdAt).format('MMM Do, YYYY')
     
     return <Wrapper>
@@ -37,7 +36,7 @@ const Job = ({ id, position, company, jobLocation, jobType, createdAt, jobStatus
             </div>
             <footer className="actions">
                 <Link to={`../edit-job/${id}`} className="btn edit-btn" >Edit</Link>
-                <Form>
+                <Form method="post" action={`../delete-job/${id}`}>
                     <button type="submit" className="btn delete-btn">
                         Delete
                     </button>
