@@ -22,5 +22,7 @@ public class User {
     private String password;
     private String location;
     private String role;
+    private String avatar;
+    private String avatarPublicId;
 
 }
