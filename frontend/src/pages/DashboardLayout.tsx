@@ -16,7 +16,7 @@ export const loader = async () => {
 } 
 
 const DashboardContext = createContext({
-    user: { name: "" },
+    user: { name: "", role: "" },
     showSidebar: false,
     isDarkTheme: false,
     toggleDarkTheme: () => {},
@@ -27,7 +27,8 @@ const DashboardContext = createContext({
 const DashboardLayout = () => {
     const loaderData = useLoaderData();
     const name = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { name: string }).name : '';
-    const user = { name };
+    const role = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { role: string }).role : '';
+    const user = { name, role };
     const navigate = useNavigate();
     const [showSidebar, setShowSidebar] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme());
