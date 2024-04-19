@@ -72,7 +72,7 @@ public class JobServiceImpl implements JobService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
-        Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job with id " + jobId + " not found"));
+        Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
 
         if (user.getId().equals(foundJob.getCreatedBy().getId())) {

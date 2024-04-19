@@ -16,7 +16,7 @@ type Props = {
     jobStatus: string;
 }
 
-const Job = ({ position, company, jobLocation, jobType, createdAt, jobStatus }: Props) => {
+const Job = ({ id, position, company, jobLocation, jobType, createdAt, jobStatus }: Props) => {
     console.log(createdAt);
     const date = day(createdAt).format('MMM Do, YYYY')
     
@@ -36,7 +36,7 @@ const Job = ({ position, company, jobLocation, jobType, createdAt, jobStatus }: 
                 <div className={`status ${jobStatus}`}>{jobStatus}</div>
             </div>
             <footer className="actions">
-                <Link className="btn edit-btn" to={""}>Edit</Link>
+                <Link to={`../edit-job/${id}`} className="btn edit-btn" >Edit</Link>
                 <Form>
                     <button type="submit" className="btn delete-btn">
                         Delete

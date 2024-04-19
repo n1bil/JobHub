@@ -5,7 +5,7 @@ type Props = {
     defaultValue?: string;
 }
 
-const FormRow = ({ type, name, labelText }: Props) => {
+const FormRow = ({ type, name, defaultValue, labelText }: Props) => {
     return (
         <div className="form-row">
             <label htmlFor={name} className="form-label">
@@ -16,6 +16,7 @@ const FormRow = ({ type, name, labelText }: Props) => {
                 id={name}
                 name={name}
                 className="form-input"
+                defaultValue={defaultValue || ''}
                 required
             />
         </div>

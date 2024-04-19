@@ -3,22 +3,7 @@ import customFetch from "../utils/customFetch";
 import { useLoaderData } from "react-router-dom";
 import { useContext, createContext } from "react";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
-
-interface Job {
-    id: string;
-    company: string;
-    position: string;
-    jobStatus: string;
-    jobType: string;
-    jobLocation: string;
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-interface AllJobsContextType {
-    jobs: Job[];
-}
+import { AllJobsContextType, Job } from "../utils/JobAbstract";
 
 export const loader = async () => {
     try {
