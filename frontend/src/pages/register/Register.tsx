@@ -22,7 +22,6 @@ export const action = async ({ request }: { request: Request }) => {
 
 const Register = () => {
     const navigation = useNavigation();
-    console.log(navigation);
     const isSumitting = navigation.state === 'submitting'
 
     return (
