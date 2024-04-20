@@ -9,12 +9,21 @@ import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.UserService;
+import com.example.backend.utils.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,12 +31,17 @@ public class UserServiceImpl implements UserService {
     private AuthRepository authRepository;
     private UserMapper userMapper;
     private MongoTemplate mongoTemplate;
+    private FileStorageService fileStorageService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Autowired
-    public UserServiceImpl(AuthRepository authRepository, UserMapper userMapper, MongoTemplate mongoTemplate) {
+    public UserServiceImpl(AuthRepository authRepository, UserMapper userMapper, MongoTemplate mongoTemplate, FileStorageService fileStorageService) {
         this.authRepository = authRepository;
         this.userMapper = userMapper;
         this.mongoTemplate = mongoTemplate;
+        this.fileStorageService = fileStorageService;
     }
 
     public UserResponseDTO getCurrentUser() {
@@ -40,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(UserUpdateRequestDTO userUpdateRequest) {
+    public UserResponseDTO updateUser(MultipartFile avatar, UserUpdateRequestDTO userUpdateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = authRepository.findByEmail(email).orElseThrow(() ->
@@ -52,6 +66,12 @@ public class UserServiceImpl implements UserService {
         user.setLocation(userUpdateRequest.getLocation());
 
         authRepository.save(user);
+
+        try {
+            fileStorageService.storeFile(avatar);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return userMapper.mapToResponseDTO(user);
     }

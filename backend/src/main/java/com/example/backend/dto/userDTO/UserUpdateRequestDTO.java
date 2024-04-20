@@ -1,9 +1,9 @@
 package com.example.backend.dto.userDTO;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -25,5 +25,7 @@ public class UserUpdateRequestDTO {
 
     @NotBlank(message = "Location is required")
     private String location;
+
+    private MultipartFile avatar;
 
 }

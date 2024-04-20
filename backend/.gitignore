@@ -33,4 +33,4 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/application.properties
-/src/main/resources/images/My_photo.jpg
+/src/main/resources/uploads/**
