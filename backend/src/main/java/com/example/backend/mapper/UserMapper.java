@@ -30,6 +30,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .location(user.getLocation())
                 .role(user.getRole())
+                .avatar(user.getAvatar())
                 .build();
     }
 }

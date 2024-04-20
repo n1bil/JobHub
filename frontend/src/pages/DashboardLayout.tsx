@@ -5,6 +5,7 @@ import { createContext, useContext, useState } from "react";
 import { checkDefaultTheme } from "../App";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
+import { User } from "../utils/UserAbstract";
 
 export const loader = async () => {
     try {
@@ -16,7 +17,7 @@ export const loader = async () => {
 } 
 
 const DashboardContext = createContext({
-    user: { id: "", name: "", lastName: "", role: "", email: "", location: "" },
+    user: { id: "", name: "", lastName: "", role: "", email: "", location: "", avatar: '' },
     showSidebar: false,
     isDarkTheme: false,
     toggleDarkTheme: () => {},
@@ -26,13 +27,8 @@ const DashboardContext = createContext({
 
 const DashboardLayout = () => {
     const loaderData = useLoaderData();
-    const id = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { id: string }).id : '';
-    const name = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { name: string }).name : '';
-    const lastName = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { lastName: string }).lastName : '';
-    const role = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { role: string }).role : '';
-    const email = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { email: string }).email : '';
-    const location = typeof loaderData === 'object' && loaderData !== null ? (loaderData as { location: string }).location : '';
-    const user = { id, name, lastName, role, email, location };
+    const user = loaderData as User;
+
     const navigate = useNavigate();
     const [showSidebar, setShowSidebar] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme());

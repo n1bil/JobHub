@@ -1,5 +1,6 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.controller.JobController;
 import com.example.backend.dto.UsersJobsResponse;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
@@ -9,9 +10,10 @@ import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.UserService;
-import com.example.backend.utils.FileStorageService;
+import com.example.backend.utils.CloudinaryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
@@ -20,28 +22,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JobController.class);
     private AuthRepository authRepository;
     private UserMapper userMapper;
     private MongoTemplate mongoTemplate;
-    private FileStorageService fileStorageService;
-
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private CloudinaryService cloudinaryService;
 
     @Autowired
-    public UserServiceImpl(AuthRepository authRepository, UserMapper userMapper, MongoTemplate mongoTemplate, FileStorageService fileStorageService) {
+    public UserServiceImpl(AuthRepository authRepository, UserMapper userMapper, MongoTemplate mongoTemplate, CloudinaryService cloudinaryService) {
         this.authRepository = authRepository;
         this.userMapper = userMapper;
         this.mongoTemplate = mongoTemplate;
-        this.fileStorageService = fileStorageService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public UserResponseDTO getCurrentUser() {
@@ -65,13 +62,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(userUpdateRequest.getPassword());
         user.setLocation(userUpdateRequest.getLocation());
 
-        authRepository.save(user);
-
-        try {
-            fileStorageService.storeFile(avatar);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (avatar != null && !avatar.isEmpty()) {
+            try {
+                Map<?, ?> result = cloudinaryService.upload(avatar);
+                String avatarUrl = (String) result.get("secure_url");
+                String publicId = (String) result.get("public_id");
+                user.setAvatar(avatarUrl);
+                user.setAvatarPublicId(publicId);
+            } catch (IOException e) {
+                String errorMessage = "An error occurred while uploading avatar for user with email: " + email;
+                logger.error(errorMessage, e);
+                throw new RuntimeException(errorMessage);
+            }
         }
+
+        authRepository.save(user);
 
         return userMapper.mapToResponseDTO(user);
     }

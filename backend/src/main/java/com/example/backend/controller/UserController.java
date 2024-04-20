@@ -46,11 +46,4 @@ public class UserController {
         return new ResponseEntity<>(applicationStats, HttpStatus.OK);
     }
 
-    @GetMapping("/admin/test")
-    public ResponseEntity<Map<String, String>> test() {
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "test route");
-
-        return ResponseEntity.ok(responseBody);
-    }
 }
