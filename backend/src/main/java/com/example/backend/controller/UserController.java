@@ -1,16 +1,18 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.UsersJobsResponse;
+import com.example.backend.dto.userDTO.StatsResponseDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
 import com.example.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,6 +39,13 @@ public class UserController {
         UserResponseDTO updatedUser = userService.updateUser(avatar, userUpdateRequest);
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/stats")
+    public ResponseEntity<StatsResponseDTO> showStats() {
+        StatsResponseDTO stats = userService.showStats();
+
+        return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     @GetMapping("/admin/app-stats")
