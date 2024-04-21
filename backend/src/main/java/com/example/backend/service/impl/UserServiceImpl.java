@@ -10,17 +10,16 @@ import com.example.backend.entity.User;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.AuthRepository;
-import com.example.backend.repository.JobRepository;
 import com.example.backend.service.UserService;
 import com.example.backend.utils.CloudinaryService;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
@@ -115,8 +114,7 @@ public class UserServiceImpl implements UserService {
                 new NotFoundException("User with email " + email + " not found"));
 
         Aggregation aggregation = newAggregation(
-                lookup("users", "createdBy.$id", "_id", "user"),
-                match(Criteria.where("user._id").is(new ObjectId(user.getId()))),
+                match(Criteria.where("createdBy.$id").is(new ObjectId(user.getId()))),
                 group("jobStatus").count().as("count")
         );
 
@@ -135,11 +133,28 @@ public class UserServiceImpl implements UserService {
             formattedResults.putIfAbsent(status, 0);
         }
 
+        Aggregation aggregation2 = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("createdBy.$id").is(new ObjectId(user.getId()))),
+                Aggregation.project()
+                        .andExpression("dateToString('%b %Y', createdAt)").as("date"),
+                Aggregation.group("date")
+                        .count().as("count"),
+                Aggregation.project()
+                        .and("_id").as("date")
+                        .and("count").as("count"),
+                Aggregation.sort(Sort.Direction.DESC, "date"),
+                Aggregation.limit(6),
+                Aggregation.project().andExclude("_id")
+        );
+
+        AggregationResults<Map> results2 = mongoTemplate.aggregate(aggregation2, "jobs", Map.class);
+        List<Map> mappedResults2 = results2.getMappedResults();
+
         StatsResponseDTO responseDTO = new StatsResponseDTO();
         responseDTO.setDefaultStats(formattedResults);
+        responseDTO.setMonthlyApplications(mappedResults2);
 
         return responseDTO;
     }
-
 
 }

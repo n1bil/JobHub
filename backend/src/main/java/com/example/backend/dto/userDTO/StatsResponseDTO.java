@@ -2,21 +2,18 @@ package com.example.backend.dto.userDTO;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class StatsResponseDTO {
 
     private Map<String, Integer> defaultStats;
+    private List<Map> monthlyApplications;
 
-    public Map<String, Integer> getDefaultStats() {
-        return defaultStats;
-    }
-
-    public void setDefaultStats(Map<String, Integer> defaultStats) {
-        this.defaultStats = defaultStats;
-    }
 }
 
