@@ -12,7 +12,7 @@ public interface JobRepository extends MongoRepository<Job, String> {
 
     List<Job> findAllByCreatedBy(String createdBy);
 
-    @Query("{$match: {createdBy: ?0}}, {$group: {_id: '$jobStatus', count: {$sum: 1}}}")
-    List<Document> aggregateJobStatusCount(ObjectId userId);
+    List<Job> findAllByCreatedByAndCompanyContainingOrPositionContaining(String createdBy, String company, String position);
 
+    List<Job> findAllByCreatedByAndCompanyContainingOrPositionContainingOrJobStatusOrJobType(String createdBy, String company, String position, String jobStatus, String jobType);
 }

@@ -24,8 +24,11 @@ public class JobController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<JobResponseDTO>> getJobs() {
-        List<JobResponseDTO> allJobs = jobService.getAllJobsByUser();
+    public ResponseEntity<List<JobResponseDTO>> getJobs(@RequestParam(value = "search", required = false) String search,
+                                                        @RequestParam(value = "jobStatus", required = false) String jobStatus,
+                                                        @RequestParam(value = "jobType", required = false) String jobType,
+                                                        @RequestParam(defaultValue = "newest") String sort) {
+        List<JobResponseDTO> allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort);
         logger.info("All jobs: {}", allJobs.size());
 
         return ResponseEntity.ok(allJobs);

@@ -10,7 +10,7 @@ public interface JobService {
 
     JobResponseDTO createJob(JobCreateRequestDTO jobRequestDTO);
 
-    List<JobResponseDTO> getAllJobsByUser();
+    List<JobResponseDTO> getAllJobsByUser(String search, String jobStatus, String jobType, String sort);
 
     JobResponseDTO getJob(String jobId);
 
