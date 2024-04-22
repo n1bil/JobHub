@@ -2,6 +2,7 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
 import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.Jobs;
 import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.entity.User;
@@ -12,11 +13,14 @@ import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.JobService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +50,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponseDTO createJob(JobCreateRequestDTO jobRequestDTO) {
+    public Jobs createJob(JobCreateRequestDTO jobRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
@@ -61,7 +65,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<JobResponseDTO> getAllJobsByUser(String search, String jobStatus, String jobType, String sort) {
+    public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
@@ -88,22 +92,30 @@ public class JobServiceImpl implements JobService {
         sortOptions.put("z-a", "-position");
 
         String sortKey = sortOptions.getOrDefault(sort, sortOptions.get("newest"));
-        System.out.println(sortKey);
 
         Sort.Direction direction = sortKey.startsWith("-") ? Sort.Direction.DESC : Sort.Direction.ASC;
         String field = sortKey.startsWith("-") ? sortKey.substring(1) : sortKey;
 
+        Pageable pageable = PageRequest.of(page - 1, limit);
+
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.sort(direction, field)
+                match(criteria),
+                sort(direction, field),
+                skip(pageable.getOffset()),
+                limit(pageable.getPageSize())
         );
+
+        long totalJobs = mongoTemplate.count(Query.query(criteria), Job.class);
+        int numOfPages = (int) Math.ceil((double) totalJobs / limit);
 
         AggregationResults<Job> results = mongoTemplate.aggregate(aggregation, "jobs", Job.class);
         List<Job> filteredJobs = results.getMappedResults();
 
-        return filteredJobs.stream()
+        List<Jobs> jobs = filteredJobs.stream()
                 .map(jobMapper::mapToJobResponseDTO)
                 .collect(Collectors.toList());
+
+        return new JobResponseDTO(totalJobs, numOfPages, page, jobs);
 
 //        if (user.getRole().equals("admin")) {
 //            return jobRepository.findAll().stream()
@@ -119,7 +131,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponseDTO getJob(String jobId) {
+    public Jobs getJob(String jobId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
@@ -134,7 +146,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponseDTO updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
+    public Jobs updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job with id '" + jobId + "' not found"));
 
         job.setCompany(requestJob.getCompany());

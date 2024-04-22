@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
 import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.Jobs;
 import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.backend.service.JobService;
 import jakarta.validation.Valid;
@@ -10,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/jobs")
@@ -24,36 +23,38 @@ public class JobController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<JobResponseDTO>> getJobs(@RequestParam(value = "search", required = false) String search,
-                                                        @RequestParam(value = "jobStatus", required = false) String jobStatus,
-                                                        @RequestParam(value = "jobType", required = false) String jobType,
-                                                        @RequestParam(defaultValue = "newest") String sort) {
-        List<JobResponseDTO> allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort);
-        logger.info("All jobs: {}", allJobs.size());
+    public ResponseEntity<JobResponseDTO> getJobs(@RequestParam(value = "search", required = false) String search,
+                                                  @RequestParam(value = "jobStatus", required = false) String jobStatus,
+                                                  @RequestParam(value = "jobType", required = false) String jobType,
+                                                  @RequestParam(defaultValue = "newest") String sort,
+                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "10") int limit) {
+        JobResponseDTO allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort, page, limit);
+        logger.info("All jobs: {}", allJobs.getJobs().size());
 
         return ResponseEntity.ok(allJobs);
     }
 
     @PostMapping()
-    public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
-        JobResponseDTO createdJob = jobService.createJob(jobRequest);
+    public ResponseEntity<Jobs> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
+        Jobs createdJob = jobService.createJob(jobRequest);
         logger.info("Job created: {}", createdJob);
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
 
     @GetMapping("/{job_id}")
-    public ResponseEntity<JobResponseDTO> getJobById(@PathVariable String job_id) {
-        JobResponseDTO receivedJob = jobService.getJob(job_id);
+    public ResponseEntity<Jobs> getJobById(@PathVariable String job_id) {
+        Jobs receivedJob = jobService.getJob(job_id);
 
         logger.info("Received Job: {}", receivedJob);
         return ResponseEntity.ok(receivedJob);
     }
 
     @PutMapping("/{job_id}")
-    public ResponseEntity<JobResponseDTO> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
-                                         @PathVariable String job_id) {
-        JobResponseDTO jobResponseDTO = jobService.updateJobById(requestJob, job_id);
+    public ResponseEntity<Jobs> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
+                                            @PathVariable String job_id) {
+        Jobs jobResponseDTO = jobService.updateJobById(requestJob, job_id);
         return new ResponseEntity<>(jobResponseDTO, HttpStatus.OK);
     }
 

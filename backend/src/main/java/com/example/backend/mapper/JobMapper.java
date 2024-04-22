@@ -1,7 +1,7 @@
 package com.example.backend.mapper;
 
 import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
-import com.example.backend.dto.jobDTO.JobResponseDTO;
+import com.example.backend.dto.jobDTO.Jobs;
 import com.example.backend.entity.Job;
 
 public class JobMapper {
@@ -16,8 +16,8 @@ public class JobMapper {
                 .build();
     }
 
-    public JobResponseDTO mapToJobResponseDTO(Job job) {
-        return JobResponseDTO.builder()
+    public Jobs mapToJobResponseDTO(Job job) {
+        return Jobs.builder()
                 .id(job.getId())
                 .company(job.getCompany())
                 .jobLocation(job.getJobLocation())
