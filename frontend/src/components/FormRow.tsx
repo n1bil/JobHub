@@ -1,11 +1,14 @@
+import { ChangeEvent } from "react";
+
 type Props = {
     type: string;
     name: string;
     labelText?: string;
     defaultValue?: string;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-const FormRow = ({ type, name, defaultValue, labelText }: Props) => {
+const FormRow = ({ type, name, defaultValue, labelText, onChange }: Props) => {
     return (
         <div className="form-row">
             <label htmlFor={name} className="form-label">
@@ -17,6 +20,7 @@ const FormRow = ({ type, name, defaultValue, labelText }: Props) => {
                 name={name}
                 className="form-input"
                 defaultValue={defaultValue || ''}
+                onChange={onChange}
                 required
             />
         </div>

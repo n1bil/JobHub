@@ -1,14 +1,18 @@
 import { JobsContainer, SearchContainer } from "../components";
 import customFetch from "../utils/customFetch";
-import { useLoaderData } from "react-router-dom";
+import { ActionFunction, useLoaderData } from "react-router-dom";
 import { useContext, createContext } from "react";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
-import { AllJobsContextType, Job } from "../utils/JobAbstract";
+import { AllJobsContextType, Job, Value } from "../utils/JobAbstract";
 
-export const loader = async () => {
+export const loader: ActionFunction = async ({ request }) => {
+    const params = Object.fromEntries([
+        ...new URL(request.url).searchParams.entries(),
+    ]);    
+    
     try {
-        const { data } = await customFetch.get("/jobs");
-        return { data };
+        const { data } = await customFetch.get("/jobs", { params });
+        return { data, searchValues: { ...params } };
     } catch (error) {
         handleError(error as CustomAxiosError);
         return error;
@@ -16,14 +20,15 @@ export const loader = async () => {
 };
 
 const AllJobsContext = createContext<AllJobsContextType>({
-    jobs: []
+    data: { jobs: [] },
+    searchValues: { search: '', jobStatus: '', jobType: '', sort: '' }
 });
 
 const AllJobs = () => {
-    const { data } = useLoaderData() as { data: Job[] };
-    
+    const { data, searchValues } = useLoaderData() as { data: { jobs: Job[] }, searchValues: Value };
+
     return (
-        <AllJobsContext.Provider value={{ jobs: data }}>
+        <AllJobsContext.Provider value={{ data, searchValues }}>
             <SearchContainer />
             <JobsContainer />
         </AllJobsContext.Provider>

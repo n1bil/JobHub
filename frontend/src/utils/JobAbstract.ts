@@ -10,6 +10,16 @@ export interface Job {
     updatedAt: string;
 }
 
+export interface Value {
+    search: string;
+    jobStatus: string;
+    jobType: string;
+    sort: string;
+}
+
 export interface AllJobsContextType {
-    jobs: Job[];
+    data: {
+        jobs: Job[];
+    };
+    searchValues: Value;
 }
