@@ -1,4 +1,4 @@
-import { FormRow, FormRowSelect, SubmitBtn } from ".";
+import { FormRow, FormRowSelect } from ".";
 import Wrapper from "../assets/wrappers/DashboardFormPage";
 import { Form, useSubmit, Link } from "react-router-dom";
 import { JOB_TYPE, JOB_STATUS, JOB_SORT_BY } from "../utils/constants";
@@ -9,6 +9,17 @@ const SearchContainer = () => {
     const { searchValues: { search, jobStatus, jobType, sort } } = useAllJobsContext();
     const submit = useSubmit();
 
+    const debounce = (onChange: (form: HTMLFormElement | null) => void) => {
+        let timeout: number | undefined;
+        return (e: ChangeEvent<HTMLInputElement>) => {
+            const form = e.currentTarget.form;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                onChange(form);
+            }, 2000);
+        };
+    };
+
     return (
         <Wrapper>
             <Form className="form">
@@ -18,9 +29,9 @@ const SearchContainer = () => {
                         type="search"
                         name="search"
                         defaultValue={search}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            submit(e.currentTarget.form);
-                        }}
+                        onChange={debounce((form) => {
+                            submit(form);
+                        })}
                     />
 
                     <FormRowSelect
