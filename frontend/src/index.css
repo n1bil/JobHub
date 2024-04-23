@@ -339,3 +339,7 @@ button:disabled {
     background: #ffeeee;
     color: #d66a6a;
 }
+
+.logo {
+    width: 200px;
+}
