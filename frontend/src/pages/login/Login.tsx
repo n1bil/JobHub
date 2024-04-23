@@ -1,5 +1,4 @@
 import { Link, Form, redirect } from "react-router-dom";
-import styles from "./Login.module.css";
 import Wrapper from "../../assets/wrappers/RegisterAndLoginPage";
 import { FormRow, Logo, SubmitBtn } from "../../components";
 import customFetch from "../../utils/customFetch";
@@ -22,7 +21,7 @@ export const action = async ({ request }: { request: Request }) => {
 const Login = () => {
     return (
         <Wrapper>
-            <Form method="post" className={`form ${styles.form}`}>
+            <Form method='post' className='form'>
                 <Logo />
                 <h4>login</h4>
                 <FormRow type="email" name="email" />
@@ -30,7 +29,7 @@ const Login = () => {
                 <SubmitBtn formBtn />
                 <p>
                     Not a member yet ?
-                    <Link to="/register" className={styles.memberBtn}>
+                    <Link to='/register' className='member-btn'>
                         Register
                     </Link>
                 </p>
