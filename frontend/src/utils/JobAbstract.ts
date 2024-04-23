@@ -19,6 +19,9 @@ export interface Value {
 
 export interface AllJobsContextType {
     data: {
+        totalJobs: number,
+        numOfPages: number,
+        currentPage: number,
         jobs: Job[];
     };
     searchValues: Value;

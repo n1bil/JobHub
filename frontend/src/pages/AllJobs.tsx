@@ -8,8 +8,8 @@ import { AllJobsContextType, Job, Value } from "../utils/JobAbstract";
 export const loader: ActionFunction = async ({ request }) => {
     const params = Object.fromEntries([
         ...new URL(request.url).searchParams.entries(),
-    ]);    
-    
+    ]);
+
     try {
         const { data } = await customFetch.get("/jobs", { params });
         return { data, searchValues: { ...params } };
@@ -20,12 +20,20 @@ export const loader: ActionFunction = async ({ request }) => {
 };
 
 const AllJobsContext = createContext<AllJobsContextType>({
-    data: { jobs: [] },
-    searchValues: { search: '', jobStatus: '', jobType: '', sort: '' }
+    data: { jobs: [], totalJobs: 0, numOfPages: 0, currentPage: 0 },
+    searchValues: { search: "", jobStatus: "", jobType: "", sort: "" },
 });
 
 const AllJobs = () => {
-    const { data, searchValues } = useLoaderData() as { data: { jobs: Job[] }, searchValues: Value };
+    const { data, searchValues } = useLoaderData() as {
+        data: {
+            jobs: Job[];
+            totalJobs: number;
+            numOfPages: number;
+            currentPage: number;
+        };
+        searchValues: Value;
+    };
 
     return (
         <AllJobsContext.Provider value={{ data, searchValues }}>
