@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import main from "../../assets/images/main.svg";
 import styles from "./Landing.module.css";
 import Wrapper from "../../assets/wrappers/LandingPage";
-import { Logo } from "../../components";
+import LogoCopy from "../../components/LogoCopy";
 
 const Landing = () => {
     return (
         <Wrapper>
             <nav className={styles.nav}>
-                <Logo />
+                <LogoCopy />
             </nav>
             <div className={`container ${styles.page}`}>
                 <div className={styles.info}>
