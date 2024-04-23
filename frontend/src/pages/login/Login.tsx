@@ -1,5 +1,5 @@
 import { Link, Form, redirect } from "react-router-dom";
-import Wrapper from "../../assets/wrappers/RegisterAndLoginPage";
+import Wrapper from "../../assets/css/RegisterAndLoginPage";
 import { FormRow, Logo, SubmitBtn } from "../../components";
 import customFetch from "../../utils/customFetch";
 import { toast } from "react-toastify";
