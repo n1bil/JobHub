@@ -1,9 +1,9 @@
 import { Form, redirect, Link } from "react-router-dom";
-import Wrapper from "../../assets/css/RegisterAndLoginPage";
-import { Logo, FormRow, SubmitBtn } from "../../components";
-import customFetch from "../../utils/customFetch";
+import Wrapper from "../assets/css/RegisterAndLoginPage";
+import { Logo, FormRow, SubmitBtn } from "../components";
+import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
-import { CustomAxiosError, handleError } from "../../utils/CustomError";
+import { CustomAxiosError, handleError } from "../utils/CustomError";
 
 export const action = async ({ request }: { request: Request }) => {
     const formData = await request.formData();
