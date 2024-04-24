@@ -33,10 +33,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> configurationSource())
+                .cors(cors -> cors.configurationSource(configurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
                         .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
@@ -44,7 +43,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout((logout) -> logout.logoutUrl("/api/v1/auth/logout")
+                .logout(logout -> logout.logoutUrl("/api/v1/auth/logout")
                         .deleteCookies("token")
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpStatus.OK.value());
@@ -60,7 +59,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://frontend-cyan-xi.vercel.app"));
+        configuration.setAllowedOrigins(List.of("https://frontend-cyan-xi.vercel.app", "https://job-hub-xi.vercel.app")); // Добавьте ваш домен фронтенда на Vercel
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
