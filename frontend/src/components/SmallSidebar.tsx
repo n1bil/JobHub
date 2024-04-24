@@ -1,5 +1,5 @@
 import { FaTimes } from "react-icons/fa";
-import Wrapper from "../assets/wrappers/SmallSidebar";
+import Wrapper from "../assets/css/SmallSidebar";
 import { useDashboardContext } from "../pages/DashboardLayout";
 import Logo from "./Logo";
 import NavLinks from "./NavLinks";

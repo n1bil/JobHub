@@ -1,4 +1,4 @@
-import Wrapper from "../assets/wrappers/StatItem";
+import Wrapper from "../assets/css/StatItem";
 
 type Props = {
     count: number;

@@ -1,6 +1,6 @@
 import BarChart from "./BarChart";
 import AreaChart from "./AreaChart";
-import Wrapper from "../assets/wrappers/ChartsContainer";
+import Wrapper from "../assets/css/ChartsContainer";
 import { MonthlyApplication } from "../utils/StatsResponse";
 import { useState } from "react";
 

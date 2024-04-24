@@ -1,6 +1,6 @@
 import { FaLocationArrow, FaBriefcase, FaCalendarAlt } from "react-icons/fa";
 import { Link, Form } from "react-router-dom";
-import Wrapper from "../assets/wrappers/Job";
+import Wrapper from "../assets/css/Job";
 import JobInfo from "./JobInfo";
 import day from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";

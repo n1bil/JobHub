@@ -1,4 +1,4 @@
-import Wrapper from "../assets/wrappers/Navbar";
+import Wrapper from "../assets/css/Navbar";
 import { FaAlignLeft } from "react-icons/fa";
 import Logo from "./Logo";
 import { useDashboardContext } from "../pages/DashboardLayout";

@@ -1,4 +1,4 @@
-import Wrapper from "../assets/wrappers/JobInfo";
+import Wrapper from "../assets/css/JobInfo";
 
 type Props = {
     icon: JSX.Element;

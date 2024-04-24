@@ -1,5 +1,5 @@
 import Job from "./Job";
-import Wrapper from "../assets/wrappers/JobsContainer";
+import Wrapper from "../assets/css/JobsContainer";
 import { useAllJobsContext } from "../pages/AllJobs";
 import PageBtnContainer from "./PageBtnContainer";
 

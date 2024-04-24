@@ -1,4 +1,4 @@
-import Wrapper from "../assets/wrappers/BigSidebar";
+import Wrapper from "../assets/css/BigSidebar";
 import NavLinks from "./NavLinks";
 import Logo from "./Logo";
 import { useDashboardContext } from "../pages/DashboardLayout";

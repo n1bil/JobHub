@@ -1,5 +1,5 @@
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
-import Wrapper from "../assets/wrappers/ThemeToggle";
+import Wrapper from "../assets/css/ThemeToggle";
 import { useDashboardContext } from "../pages/DashboardLayout";
 
 const ThemeToggle = () => {

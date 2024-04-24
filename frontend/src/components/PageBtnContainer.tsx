@@ -1,5 +1,5 @@
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi";
-import Wrapper from "../assets/wrappers/PageBtnContainer";
+import Wrapper from "../assets/css/PageBtnContainer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAllJobsContext } from "../pages/AllJobs";
 
