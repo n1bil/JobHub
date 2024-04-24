@@ -1,4 +1,5 @@
-FROM eclipse-mosquitto:17-jdk-alpine
+FROM alpine:latest
+RUN apk --no-cache add openjdk19
 VOLUME /tmp
 COPY target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
