@@ -30,7 +30,7 @@ public class JobController {
                                                   @RequestParam(defaultValue = "1") int page,
                                                   @RequestParam(defaultValue = "10") int limit) {
         JobResponseDTO allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort, page, limit);
-        logger.info("All jobs: {}", allJobs.getJobs().size());
+        logger.info("Retrieved all jobs. Total count: {}", allJobs.getJobs().size());
 
         return ResponseEntity.ok(allJobs);
     }
@@ -38,7 +38,7 @@ public class JobController {
     @PostMapping()
     public ResponseEntity<Jobs> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
         Jobs createdJob = jobService.createJob(jobRequest);
-        logger.info("Job created: {}", createdJob);
+        logger.info("Created job with ID: {}", createdJob.getId());
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
@@ -47,20 +47,28 @@ public class JobController {
     public ResponseEntity<Jobs> getJobById(@PathVariable String job_id) {
         Jobs receivedJob = jobService.getJob(job_id);
 
-        logger.info("Received Job: {}", receivedJob);
-        return ResponseEntity.ok(receivedJob);
+        if (receivedJob != null) {
+            logger.info("Retrieved job with ID: {}", job_id);
+            return ResponseEntity.ok(receivedJob);
+        } else {
+            logger.warn("Job with ID {} not found", job_id);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{job_id}")
     public ResponseEntity<Jobs> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
                                             @PathVariable String job_id) {
         Jobs jobResponseDTO = jobService.updateJobById(requestJob, job_id);
+        logger.info("Updated job with ID: {}", job_id);
+
         return new ResponseEntity<>(jobResponseDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{job_id}")
     public ResponseEntity<String> deleteJobById(@PathVariable String job_id) {
         jobService.deleteJobById(job_id);
+        logger.info("Deleted job with ID: {}", job_id);
 
         return new ResponseEntity<>("Job entity was deleted successfully", HttpStatus.OK);
     }

@@ -5,6 +5,8 @@ import com.example.backend.dto.userDTO.StatsResponseDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
 import com.example.backend.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/v1")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private UserService userService;
 
     @Autowired
@@ -25,6 +28,7 @@ public class UserController {
     @GetMapping("/users/current-user")
     public ResponseEntity<UserResponseDTO> getCurrentUser() {
         UserResponseDTO currentUser = userService.getCurrentUser();
+        logger.info("Retrieved current user: {}", currentUser.getName());
 
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
@@ -33,6 +37,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> updateUser(@RequestParam("avatar") MultipartFile avatar,
                                                       @ModelAttribute UserUpdateRequestDTO userUpdateRequest) {
         UserResponseDTO updatedUser = userService.updateUser(avatar, userUpdateRequest);
+        logger.info("Updated user: {}", updatedUser.getName());
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
@@ -40,6 +45,7 @@ public class UserController {
     @GetMapping("/users/stats")
     public ResponseEntity<StatsResponseDTO> showStats() {
         StatsResponseDTO stats = userService.showStats();
+        logger.info("Retrieved user stats");
 
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
@@ -47,6 +53,7 @@ public class UserController {
     @GetMapping("/admin/app-stats")
     public ResponseEntity<UsersJobsResponse> getApplicationStats() {
         UsersJobsResponse applicationStats = userService.getApplicationStats();
+        logger.info("Retrieved application stats");
 
         return new ResponseEntity<>(applicationStats, HttpStatus.OK);
     }

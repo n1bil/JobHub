@@ -8,6 +8,8 @@ import com.example.backend.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private AuthService userService;
 
     @Autowired
@@ -33,6 +36,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO userRequest) {
         UserResponseDTO registeredUser = userService.register(userRequest);
+        logger.info("Registered user: {}", registeredUser.getName());
 
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
@@ -45,6 +49,7 @@ public class AuthController {
         cookie.setMaxAge(24 * 60 * 60);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+        logger.info("User logged in: {}", loginDto.getEmail());
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "User logged in");
