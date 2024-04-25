@@ -10,15 +10,18 @@ const SearchContainer = () => {
     const submit = useSubmit();
 
     const debounce = (onChange: (form: HTMLFormElement | null) => void) => {
-        let timeout: number | undefined;
+        let timeout: NodeJS.Timeout | undefined;
         return (e: ChangeEvent<HTMLInputElement>) => {
             const form = e.currentTarget.form;
-            clearTimeout(timeout);
+            if (timeout) {
+                clearTimeout(timeout);
+            }
             timeout = setTimeout(() => {
                 onChange(form);
             }, 2000);
         };
     };
+    
 
     return (
         <Wrapper>
