@@ -1,7 +1,11 @@
 import logo from "../assets/images/logo-land.png";
+import logoBack from "../assets/images/logo-color.png";
+import { checkDefaultTheme } from "../App";
 
 const LogoCopy = () => {
-    return <img src={logo} alt='jobhub' className='logo' />;
+  const theme = checkDefaultTheme(); 
+  
+    return <img src={theme ? logoBack : logo} alt='jobhub' className='logo' />;
   };
 
 export default LogoCopy;
