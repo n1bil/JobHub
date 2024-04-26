@@ -60,7 +60,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("https://frontend-one-beige.vercel.app", "http://localhost:5173", "https://frontend-1ww6fei42-nabils-projects-0b0e1216.vercel.app/"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // Добавлено разрешение передачи куки вместе с запросами CORS
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
