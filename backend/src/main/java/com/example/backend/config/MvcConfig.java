@@ -18,7 +18,7 @@ public class MvcConfig implements WebMvcConfigurer {
                         .allowedOrigins("https://frontend-one-beige.vercel.app/", "http://localhost:5173/", "https://frontend-1ww6fei42-nabils-projects-0b0e1216.vercel.app/")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // Добавлено разрешение передачи куки вместе с запросами CORS;
+                        .allowCredentials(true);
             }
         };
     }
