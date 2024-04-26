@@ -57,7 +57,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://frontend-one-beige.vercel.app"));
+        configuration.setAllowedOrigins(List.of("https://frontend-one-beige.vercel.app", "http://localhost:5173", "https://frontend-1ww6fei42-nabils-projects-0b0e1216.vercel.app/"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // Добавлено разрешение передачи куки вместе с запросами CORS
