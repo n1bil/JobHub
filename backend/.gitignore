@@ -1,6 +1,7 @@
 HELP.md
-target/**
-
+target/*
+!/target/backend-1.jar
+!/target/backend-1.jar.original
 !**/src/main/**/target/
 !**/src/test/**/target/
 
