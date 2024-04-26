@@ -37,10 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/api/v1/auth/**").permitAll()
-//                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
-//                        .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
-//                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("admin")
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -60,9 +57,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true); // Добавлено разрешение передачи куки вместе с запросами CORS
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -78,3 +76,7 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
+//                        .requestMatchers("/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
+//                        .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
+//                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("admin")
