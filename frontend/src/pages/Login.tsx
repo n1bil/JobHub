@@ -4,12 +4,14 @@ import { FormRow, SubmitBtn } from "../components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
+import { QueryClient } from "@tanstack/react-query";
 
-export const action = async ({ request }: { request: Request }) => {
+export const action = (queryClient: QueryClient) => async ({ request }: { request: Request }) => {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
     try {
         await customFetch.post("/auth/login", data);
+        queryClient.invalidateQueries();
         toast.success("Login successful");
         return redirect("/dashboard");
     } catch (error) {

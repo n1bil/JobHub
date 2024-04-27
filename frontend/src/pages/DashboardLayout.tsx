@@ -41,7 +41,7 @@ const DashboardContext = createContext({
     logoutUser: async () => {},
 });
 
-const DashboardLayout = ({ queryClient }) => {
+const DashboardLayout: React.FC<{ queryClient: QueryClient }> = ({ queryClient }) => {
     const loaderData = useQuery(userQuery).data;
     const user = loaderData as User;
     const navigate = useNavigate();
@@ -64,6 +64,7 @@ const DashboardLayout = ({ queryClient }) => {
     const logoutUser = async () => {
         navigate("/");
         await customFetch.post("/auth/logout");
+        queryClient.invalidateQueries();
         toast.success("Logging out...");
     };
 
