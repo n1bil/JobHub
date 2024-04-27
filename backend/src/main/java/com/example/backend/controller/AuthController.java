@@ -44,13 +44,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequestDTO loginDto, HttpServletResponse response) {
         AuthResponseDTO authResponse = userService.login(loginDto);
-        Cookie cookie = new Cookie("token", authResponse.getAccessToken());
+        String accessToken = authResponse.getAccessToken();
+        Cookie cookie = new Cookie("token", accessToken);
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
         response.addCookie(cookie);
         logger.info("User logged in: {}", loginDto.getEmail());
+
+        response.setHeader("Set-Cookie", String.format("token=%s; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=None", accessToken));
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "User logged in");
