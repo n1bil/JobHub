@@ -1,6 +1,6 @@
 import { Form, redirect, Link } from "react-router-dom";
 import Wrapper from "../assets/css/RegisterAndLoginPage";
-import { Logo, FormRow, SubmitBtn } from "../components";
+import { FormRow, SubmitBtn } from "../components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
@@ -11,8 +11,8 @@ export const action = async ({ request }: { request: Request }) => {
 
     try {
         await customFetch.post("/auth/register", data);
-        toast.success('Registration successful');
-        return redirect('/login');
+        toast.success("Registration successful");
+        return redirect("/login");
     } catch (error) {
         handleError(error as CustomAxiosError);
         return error;
@@ -23,7 +23,11 @@ const Register = () => {
     return (
         <Wrapper>
             <Form method="post" className="form">
-                <Logo />
+                <div className="logo">
+                    <h3>
+                        JOB<span>HUB</span>
+                    </h3>
+                </div>
                 <h4>Register</h4>
                 <FormRow type="text" name="name" labelText="name" />
                 <FormRow type="text" name="lastName" labelText="Last Name" />

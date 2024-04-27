@@ -1,6 +1,6 @@
 import { Link, Form, redirect } from "react-router-dom";
 import Wrapper from "../assets/css/RegisterAndLoginPage";
-import { FormRow, Logo, SubmitBtn } from "../components";
+import { FormRow, SubmitBtn } from "../components";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
@@ -21,15 +21,19 @@ export const action = async ({ request }: { request: Request }) => {
 const Login = () => {
     return (
         <Wrapper>
-            <Form method='post' className='form'>
-                <Logo />
+            <Form method="post" className="form">
+                <div className="logo">
+                    <h3>
+                        JOB<span>HUB</span>
+                    </h3>
+                </div>
                 <h4>login</h4>
                 <FormRow type="email" name="email" />
                 <FormRow type="password" name="password" />
                 <SubmitBtn formBtn />
                 <p>
                     Not a member yet ?
-                    <Link to='/register' className='member-btn'>
+                    <Link to="/register" className="member-btn">
                         Register
                     </Link>
                 </p>

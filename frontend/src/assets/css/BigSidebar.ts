@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.aside`
-background: var(--background-color);
-  display: none;
+display: none;
   @media (min-width: 992px) {
     display: block;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
@@ -25,7 +24,11 @@ background: var(--background-color);
       height: 6rem;
       display: flex;
       align-items: center;
-      padding-left: 2.5rem;
+      justify-content: center;
+
+      .logo h3 {
+        font-size: 2rem;
+      }
     }
     .nav-links {
       padding-top: 2rem;
@@ -43,7 +46,7 @@ background: var(--background-color);
     }
     .nav-link:hover {
       padding-left: 3rem;
-      color: var(--primary-500);
+      color: var(--primary-100);
       transition: var(--transition);
     }
     .icon {
