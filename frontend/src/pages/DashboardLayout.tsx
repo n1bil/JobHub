@@ -1,6 +1,12 @@
-import { Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import {
+    Outlet,
+    redirect,
+    useLoaderData,
+    useNavigate,
+    useNavigation,
+} from "react-router-dom";
 import Wrapper from "../assets/css/Dashboard";
-import { BigSidebar, Navbar, SmallSidebar } from "../components";
+import { BigSidebar, Navbar, SmallSidebar, Loading } from "../components";
 import { createContext, useContext, useState } from "react";
 import { checkDefaultTheme } from "../App";
 import customFetch from "../utils/customFetch";
@@ -9,15 +15,23 @@ import { User } from "../utils/UserAbstract";
 
 export const loader = async () => {
     try {
-        const { data } = await customFetch.get('/users/current-user');
+        const { data } = await customFetch.get("/users/current-user");
         return data;
     } catch (error) {
-        return redirect('/');
+        return redirect("/");
     }
-} 
+};
 
 const DashboardContext = createContext({
-    user: { id: "", name: "", lastName: "", role: "", email: "", location: "", avatar: '' },
+    user: {
+        id: "",
+        name: "",
+        lastName: "",
+        role: "",
+        email: "",
+        location: "",
+        avatar: "",
+    },
     showSidebar: false,
     isDarkTheme: false,
     toggleDarkTheme: () => {},
@@ -28,8 +42,9 @@ const DashboardContext = createContext({
 const DashboardLayout = () => {
     const loaderData = useLoaderData();
     const user = loaderData as User;
-
     const navigate = useNavigate();
+    const navigation = useNavigation();
+    const isPageLoading = navigation.state === "loading";
     const [showSidebar, setShowSidebar] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme());
 
@@ -45,9 +60,9 @@ const DashboardLayout = () => {
     };
 
     const logoutUser = async () => {
-        navigate('/');
-        await customFetch.post('/auth/logout');
-        toast.success("Logging out...")
+        navigate("/");
+        await customFetch.post("/auth/logout");
+        toast.success("Logging out...");
     };
 
     return (
@@ -68,7 +83,11 @@ const DashboardLayout = () => {
                     <div>
                         <Navbar />
                         <div className="dashboard-page">
-                            <Outlet context={{ user }} />
+                            {isPageLoading ? (
+                                <Loading />
+                            ) : (
+                                <Outlet context={{ user }} />
+                            )}
                         </div>
                     </div>
                 </main>
