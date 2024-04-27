@@ -1,10 +1,4 @@
-import {
-    Outlet,
-    redirect,
-    useLoaderData,
-    useNavigate,
-    useNavigation,
-} from "react-router-dom";
+import { Outlet, redirect, useNavigate, useNavigation } from "react-router-dom";
 import Wrapper from "../assets/css/Dashboard";
 import { BigSidebar, Navbar, SmallSidebar, Loading } from "../components";
 import { createContext, useContext, useState } from "react";
@@ -12,11 +6,19 @@ import { checkDefaultTheme } from "../App";
 import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { User } from "../utils/UserAbstract";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
-export const loader = async () => {
-    try {
+const userQuery = {
+    queryKey: ["user"],
+    queryFn: async () => {
         const { data } = await customFetch.get("/users/current-user");
         return data;
+    },
+};
+
+export const loader = (queryClient: QueryClient) => async () => {
+    try {
+        return await queryClient.ensureQueryData(userQuery);
     } catch (error) {
         return redirect("/");
     }
@@ -39,8 +41,8 @@ const DashboardContext = createContext({
     logoutUser: async () => {},
 });
 
-const DashboardLayout = () => {
-    const loaderData = useLoaderData();
+const DashboardLayout = ({ queryClient }) => {
+    const loaderData = useQuery(userQuery).data;
     const user = loaderData as User;
     const navigate = useNavigate();
     const navigation = useNavigation();
