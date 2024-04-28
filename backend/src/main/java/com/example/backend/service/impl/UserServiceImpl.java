@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,24 +56,20 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserResponseDTO getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = authRepository.findByEmail(email).orElseThrow(() ->
-                                        new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentAuthUser();
 
         return userMapper.mapToResponseDTO(user);
     }
 
     @Override
     public UserResponseDTO updateUser(MultipartFile avatar, UserUpdateRequestDTO userUpdateRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = authRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentAuthUser();
 
         user.setName(userUpdateRequest.getName());
         user.setLastName(userUpdateRequest.getLastName());
-        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        if (!userUpdateRequest.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        }
         user.setLocation(userUpdateRequest.getLocation());
 
         if (avatar != null && !avatar.isEmpty()) {
@@ -83,7 +80,7 @@ public class UserServiceImpl implements UserService {
                 user.setAvatar(avatarUrl);
                 user.setAvatarPublicId(publicId);
             } catch (IOException e) {
-                String errorMessage = "An error occurred while uploading avatar for user with email: " + email;
+                String errorMessage = "An error occurred while uploading avatar for user with email: " + user.getEmail();
                 logger.error(errorMessage, e);
                 throw new RuntimeException(errorMessage);
             }
@@ -108,10 +105,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public StatsResponseDTO showStats() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = authRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentAuthUser();
 
         Aggregation aggregation = newAggregation(
                 match(Criteria.where("createdBy.$id").is(new ObjectId(user.getId()))),
@@ -155,6 +149,14 @@ public class UserServiceImpl implements UserService {
         responseDTO.setMonthlyApplications(mappedResults2);
 
         return responseDTO;
+    }
+
+
+    private User getCurrentAuthUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        return authRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
     }
 
 }

@@ -51,14 +51,10 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Jobs createJob(JobCreateRequestDTO jobRequestDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        User foundUser = userRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentUser();
 
         Job job = jobMapper.mapToJob(jobRequestDTO);
-        job.setCreatedBy(foundUser);
+        job.setCreatedBy(user);
         Job savedJob = jobRepository.save(job);
 
         return jobMapper.mapToJobResponseDTO(savedJob);
@@ -66,9 +62,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentUser();
 
         Criteria criteria = Criteria.where("createdBy.$id").is(new ObjectId(user.getId()));
         if (search != null && !search.isEmpty()) {
@@ -132,11 +126,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Jobs getJob(String jobId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        User user = getCurrentUser();
         Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
-
 
         if (user.getId().equals(foundJob.getCreatedBy().getId())) {
             return jobMapper.mapToJobResponseDTO(foundJob);
@@ -147,7 +138,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Jobs updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
-        Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job with id '" + jobId + "' not found"));
+        getCurrentUser();
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         job.setCompany(requestJob.getCompany());
         job.setPosition(requestJob.getPosition());
@@ -162,8 +154,15 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void deleteJobById(String jobId) {
-        Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job with id '" + jobId + "' not found"));
+        getCurrentUser();
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         jobRepository.delete(job);
+    }
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
     }
 }
