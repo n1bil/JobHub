@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import com.example.backend.security.JwtAuthenticationEntryPoint;
 import com.example.backend.security.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,9 +38,13 @@ public class SecurityConfig {
                 .cors(cors -> configurationSource())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-
+//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
+                        .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
+                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("admin")
                         .anyRequest().authenticated())
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout((logout) -> logout.logoutUrl("/api/v1/auth/logout")
@@ -76,7 +82,3 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
-//                        .requestMatchers("/api/v1/auth/**").permitAll()
-//                        .requestMatchers("/api/v1/jobs/**").hasAnyAuthority("user", "admin")
-//                        .requestMatchers("/api/v1/users/**").hasAnyAuthority("user", "admin")
-//                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("admin")
