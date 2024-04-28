@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
 import { Job } from "../utils/JobAbstract";
+import { InvalidateQueryFilters, QueryClient } from "@tanstack/react-query";
 
 export const loader: ActionFunction = async ({ params }) => {
     try {
@@ -18,12 +19,13 @@ export const loader: ActionFunction = async ({ params }) => {
     }
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = (queryClient: QueryClient) => async ({ request, params }) => {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
     try {
         await customFetch.put(`/jobs/${params.id}`, data);
         toast.success("Job edited successfully");
+        queryClient.invalidateQueries(['jobs'] as InvalidateQueryFilters);
         return redirect("/dashboard/all-jobs");
     } catch (error) {
         handleError(error as CustomAxiosError);

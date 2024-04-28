@@ -6,6 +6,7 @@ import { Form, redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
+import { InvalidateQueryFilters, QueryClient } from "@tanstack/react-query";
 
 interface User {
   location: string | undefined;
@@ -16,11 +17,12 @@ interface OutletContext {
   user: User;
 }
 
-export const action = async ({ request }: { request: Request }) => {
+export const action = (queryClient: QueryClient) => async ({ request }: { request: Request }) => {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
     try {
         await customFetch.post("/jobs", data);
+        queryClient.invalidateQueries(['jobs'] as InvalidateQueryFilters);
         toast.success("Job added successfully");
         return redirect('all-jobs');
     } catch (error) {
