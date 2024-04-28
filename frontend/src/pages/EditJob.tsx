@@ -1,29 +1,45 @@
 import { FormRow, FormRowSelect, SubmitBtn } from "../components";
 import Wrapper from "../assets/css/DashboardFormPage";
-import { ActionFunction, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { JOB_STATUS, JOB_TYPE } from "../utils/constants";
 import { Form, redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 import customFetch from "../utils/customFetch";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
-import { Job } from "../utils/JobAbstract";
-import { InvalidateQueryFilters, QueryClient } from "@tanstack/react-query";
+import { InvalidateQueryFilters, QueryClient, useQuery } from "@tanstack/react-query";
 
-export const loader: ActionFunction = async ({ params }) => {
+interface Params {
+    id: string;
+}
+
+const singleJobQuery = (id: string) => {
+    return {
+        queryKey:['job', id],
+        queryFn: async () => {
+            const { data } = await customFetch.get(`/jobs/${id}`);
+            return data;
+        }
+    }
+}
+
+export const loader = (queryClient: QueryClient) => async ({ params }: { params: unknown }) => {
     try {
-        const { data } = await customFetch.get(`/jobs/${params.id}`);
-        return data;
+        const prop = params as Params;
+        await queryClient.ensureQueryData(singleJobQuery(prop.id));
+        return prop.id;
     } catch (error) {
         handleError(error as CustomAxiosError);
         return redirect("/dashboard/all-jobs");
     }
 };
 
-export const action = (queryClient: QueryClient) => async ({ request, params }) => {
-    const formData = await request.formData();
+export const action = (queryClient: QueryClient) => async ({ request, params }: { request: unknown, params: unknown }) => {
+    const propRequest = request as Request;
+    const propParams = params as Params;
+    const formData = await propRequest.formData();
     const data = Object.fromEntries(formData);
     try {
-        await customFetch.put(`/jobs/${params.id}`, data);
+        await customFetch.put(`/jobs/${propParams.id}`, data);
         toast.success("Job edited successfully");
         queryClient.invalidateQueries(['jobs'] as InvalidateQueryFilters);
         return redirect("/dashboard/all-jobs");
@@ -34,7 +50,9 @@ export const action = (queryClient: QueryClient) => async ({ request, params }) 
 };
 
 const EditJob = () => {
-    const data = useLoaderData() as Job;
+    // const data = useLoaderData() as Job;
+    const id = useLoaderData() as string;
+    const { data } = useQuery(singleJobQuery(id));
 
     return (
         <Wrapper>
