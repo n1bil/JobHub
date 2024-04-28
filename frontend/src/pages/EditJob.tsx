@@ -8,7 +8,7 @@ import customFetch from "../utils/customFetch";
 import { CustomAxiosError, handleError } from "../utils/CustomError";
 import { InvalidateQueryFilters, QueryClient, useQuery } from "@tanstack/react-query";
 
-interface Params {
+export interface Params {
     id: string;
 }
 
