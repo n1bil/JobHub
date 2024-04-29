@@ -5,6 +5,9 @@ import com.example.backend.dto.AuthDTO.AuthResponseDTO;
 import com.example.backend.dto.userDTO.UserRequestDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -33,6 +36,8 @@ public class AuthController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Register a new user", description = "Register a new user with the provided details")
+    @ApiResponse(responseCode = "201", description = "User successfully registered")
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO userRequest) {
         UserResponseDTO registeredUser = userService.register(userRequest);
@@ -41,6 +46,12 @@ public class AuthController {
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Login with credentials", description = "Authenticate user with provided credentials and generate access token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged in successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequestDTO loginDto, HttpServletResponse response) {
         AuthResponseDTO authResponse = userService.login(loginDto);

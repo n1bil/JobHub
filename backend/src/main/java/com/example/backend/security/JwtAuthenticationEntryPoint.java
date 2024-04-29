@@ -29,7 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json");
 
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("message", "Invalid email or password");
+        responseBody.put("message", "Access Denied");
 
         // Преобразуем тело ответа в JSON и отправляем его
         objectMapper.writeValue(response.getWriter(), responseBody);
