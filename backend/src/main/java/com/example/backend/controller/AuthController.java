@@ -53,7 +53,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequestDTO loginDto, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody AuthRequestDTO loginDto, HttpServletResponse response) {
         AuthResponseDTO authResponse = userService.login(loginDto);
         String accessToken = authResponse.getAccessToken();
         Cookie cookie = new Cookie("token", accessToken);

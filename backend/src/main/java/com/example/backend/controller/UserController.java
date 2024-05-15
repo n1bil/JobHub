@@ -8,6 +8,7 @@ import com.example.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class UserController {
     })
     @PutMapping("/users/update-user")
     public ResponseEntity<UserResponseDTO> updateUser(@RequestParam("avatar") MultipartFile avatar,
-                                                      @ModelAttribute UserUpdateRequestDTO userUpdateRequest) {
+                                                      @Valid @ModelAttribute UserUpdateRequestDTO userUpdateRequest) {
         UserResponseDTO updatedUser = userService.updateUser(avatar, userUpdateRequest);
         logger.info("Updated user: {}", updatedUser.getName());
 
