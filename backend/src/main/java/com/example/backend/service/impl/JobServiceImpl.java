@@ -2,17 +2,18 @@ package com.example.backend.service.impl;
 
 import com.example.backend.dto.jobDTO.JobCreateRequestDTO;
 import com.example.backend.dto.jobDTO.JobResponseDTO;
-import com.example.backend.dto.jobDTO.Jobs;
 import com.example.backend.dto.jobDTO.JobUpdateRequestDTO;
+import com.example.backend.dto.jobDTO.Jobs;
 import com.example.backend.entity.Job;
 import com.example.backend.entity.User;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.JobMapper;
-import com.example.backend.repository.JobRepository;
 import com.example.backend.repository.AuthRepository;
+import com.example.backend.repository.JobRepository;
 import com.example.backend.service.JobService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -64,50 +65,64 @@ public class JobServiceImpl implements JobService {
     public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
         User user = getCurrentUser();
 
-        Criteria criteria = Criteria.where("createdBy.$id").is(new ObjectId(user.getId()));
-        if (search != null && !search.isEmpty()) {
-            criteria.orOperator(
-                    Criteria.where("position").regex(search, "i"),
-                    Criteria.where("company").regex(search, "i")
+        List<Jobs> jobs;
+        long totalJobs;
+        int numOfPages;
+
+        if (user.getRole().equals("admin")) {
+            Pageable pageable = PageRequest.of(page - 1, limit);
+            Page<Job> jobsPage = jobRepository.findAll(pageable);
+            jobs = jobsPage.getContent().stream()
+                    .map(jobMapper::mapToJobResponseDTO)
+                    .toList();
+            totalJobs = jobsPage.getTotalElements();
+            numOfPages = jobsPage.getTotalPages();
+        } else {
+            Criteria criteria = Criteria.where("createdBy.$id").is(new ObjectId(user.getId()));
+            if (search != null && !search.isEmpty()) {
+                criteria.orOperator(
+                        Criteria.where("position").regex(search, "i"),
+                        Criteria.where("company").regex(search, "i")
+                );
+            }
+
+            if (jobStatus != null && !jobStatus.isEmpty() && !jobStatus.equals("all")) {
+                criteria.and("jobStatus").is(jobStatus);
+            }
+            if (jobType != null && !jobType.isEmpty() && !jobType.equals("all")) {
+                criteria.and("jobType").is(jobType);
+            }
+
+            Map<String, String> sortOptions = new HashMap<>();
+            sortOptions.put("newest", "-createdAt");
+            sortOptions.put("oldest", "createdAt");
+            sortOptions.put("a-z", "position");
+            sortOptions.put("z-a", "-position");
+
+            String sortKey = sortOptions.getOrDefault(sort, sortOptions.get("newest"));
+
+            Sort.Direction direction = sortKey.startsWith("-") ? Sort.Direction.DESC : Sort.Direction.ASC;
+            String field = sortKey.startsWith("-") ? sortKey.substring(1) : sortKey;
+
+            Pageable pageable = PageRequest.of(page - 1, limit);
+
+            Aggregation aggregation = Aggregation.newAggregation(
+                    match(criteria),
+                    sort(direction, field),
+                    skip(pageable.getOffset()),
+                    limit(pageable.getPageSize())
             );
+
+            totalJobs = mongoTemplate.count(Query.query(criteria), Job.class);
+            numOfPages = (int) Math.ceil((double) totalJobs / limit);
+
+            AggregationResults<Job> results = mongoTemplate.aggregate(aggregation, "jobs", Job.class);
+            List<Job> filteredJobs = results.getMappedResults();
+
+            jobs = filteredJobs.stream()
+                    .map(jobMapper::mapToJobResponseDTO)
+                    .collect(Collectors.toList());
         }
-
-        if (jobStatus != null && !jobStatus.isEmpty() && !jobStatus.equals("all")) {
-            criteria.and("jobStatus").is(jobStatus);
-        }
-        if (jobType != null && !jobType.isEmpty() && !jobType.equals("all")) {
-            criteria.and("jobType").is(jobType);
-        }
-
-        Map<String, String> sortOptions = new HashMap<>();
-        sortOptions.put("newest", "-createdAt");
-        sortOptions.put("oldest", "createdAt");
-        sortOptions.put("a-z", "position");
-        sortOptions.put("z-a", "-position");
-
-        String sortKey = sortOptions.getOrDefault(sort, sortOptions.get("newest"));
-
-        Sort.Direction direction = sortKey.startsWith("-") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        String field = sortKey.startsWith("-") ? sortKey.substring(1) : sortKey;
-
-        Pageable pageable = PageRequest.of(page - 1, limit);
-
-        Aggregation aggregation = Aggregation.newAggregation(
-                match(criteria),
-                sort(direction, field),
-                skip(pageable.getOffset()),
-                limit(pageable.getPageSize())
-        );
-
-        long totalJobs = mongoTemplate.count(Query.query(criteria), Job.class);
-        int numOfPages = (int) Math.ceil((double) totalJobs / limit);
-
-        AggregationResults<Job> results = mongoTemplate.aggregate(aggregation, "jobs", Job.class);
-        List<Job> filteredJobs = results.getMappedResults();
-
-        List<Jobs> jobs = filteredJobs.stream()
-                .map(jobMapper::mapToJobResponseDTO)
-                .collect(Collectors.toList());
 
         return new JobResponseDTO(totalJobs, numOfPages, page, jobs);
 
