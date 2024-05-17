@@ -1,6 +1,6 @@
-import Wrapper from "../assets/css/BigSidebar";
-import NavLinks from "./NavLinks";
-import { useDashboardContext } from "../pages/DashboardLayout";
+import Wrapper from "../../assets/css/BigSidebar";
+import NavLinks from "../NavLinks";
+import { useDashboardContext } from "../../pages/DashboardLayout";
 
 const BigSidebar = () => {
     const { showSidebar } = useDashboardContext();

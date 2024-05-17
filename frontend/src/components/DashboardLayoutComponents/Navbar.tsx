@@ -1,6 +1,6 @@
-import Wrapper from "../assets/css/Navbar";
+import Wrapper from "../../assets/css/Navbar";
 import { FaAlignLeft } from "react-icons/fa";
-import { useDashboardContext } from "../pages/DashboardLayout";
+import { useDashboardContext } from "../../pages/DashboardLayout";
 import Logout from "./Logout";
 import ThemeToggle from "./ThemeToggle";
 

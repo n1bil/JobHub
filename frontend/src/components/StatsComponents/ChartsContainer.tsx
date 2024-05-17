@@ -1,7 +1,7 @@
 import BarChart from "./BarChart";
 import AreaChart from "./AreaChart";
-import Wrapper from "../assets/css/ChartsContainer";
-import { MonthlyApplication } from "../utils/StatsResponse";
+import Wrapper from "../../assets/css/ChartsContainer";
+import { MonthlyApplication } from "../../utils/StatsResponse";
 import { useState } from "react";
 
 type Props = {

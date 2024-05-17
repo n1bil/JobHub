@@ -7,7 +7,7 @@ import {
     CartesianGrid,
     Tooltip,
 } from "recharts";
-import { MonthlyApplication } from "../utils/StatsResponse";
+import { MonthlyApplication } from "../../utils/StatsResponse";
 
 type Props = {
     data: MonthlyApplication[];

@@ -1,6 +1,6 @@
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
-import Wrapper from "../assets/css/ThemeToggle";
-import { useDashboardContext } from "../pages/DashboardLayout";
+import Wrapper from "../../assets/css/ThemeToggle";
+import { useDashboardContext } from "../../pages/DashboardLayout";
 
 const ThemeToggle = () => {
     const { isDarkTheme, toggleDarkTheme } = useDashboardContext();

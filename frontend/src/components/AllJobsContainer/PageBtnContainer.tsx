@@ -1,7 +1,7 @@
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi";
-import Wrapper from "../assets/css/PageBtnContainer";
+import Wrapper from "../../assets/css/PageBtnContainer";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAllJobsContext } from "../pages/AllJobs";
+import { useAllJobsContext } from "../../pages/AllJobs";
 
 const PageBtnContainer = () => {
     const { data: { numOfPages, currentPage } } = useAllJobsContext();

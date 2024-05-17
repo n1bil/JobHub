@@ -21,7 +21,7 @@ const FormRow = ({ type, name, defaultValue, labelText, onChange }: Props) => {
                 className="form-input"
                 defaultValue={defaultValue || ''}
                 onChange={onChange}
-                required
+                
             />
         </div>
     );

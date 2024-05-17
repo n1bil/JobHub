@@ -1,6 +1,6 @@
 import Job from "./Job";
-import Wrapper from "../assets/css/JobsContainer";
-import { useAllJobsContext } from "../pages/AllJobs";
+import Wrapper from "../../assets/css/JobsContainer";
+import { useAllJobsContext } from "../../pages/AllJobs";
 import PageBtnContainer from "./PageBtnContainer";
 
 const JobsContainer = () => {
