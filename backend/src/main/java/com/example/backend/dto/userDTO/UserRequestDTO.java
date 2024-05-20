@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class UserRequestDTO {
 
     @NotBlank(message = "Name is required")
