@@ -13,6 +13,7 @@ import com.example.backend.repository.JobRepository;
 import com.example.backend.service.JobService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "userJobs", key = "{#search, #jobStatus, #jobType, #sort, #page, #limit}")
     public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
         User user = getCurrentUser();
 
@@ -126,20 +128,10 @@ public class JobServiceImpl implements JobService {
 
         return new JobResponseDTO(totalJobs, numOfPages, page, jobs);
 
-//        if (user.getRole().equals("admin")) {
-//            return jobRepository.findAll().stream()
-//                    .map(jobMapper::mapToJobResponseDTO)
-//                    .collect(Collectors.toList());
-//        } else {
-//            List<Job> jobs = jobRepository.findAllByCreatedBy(user.getId());
-//
-//            return jobs.stream()
-//                    .map(jobMapper::mapToJobResponseDTO)
-//                    .collect(Collectors.toList());
-//        }
     }
 
     @Override
+    @Cacheable(value = "jobs", key = "#jobId")
     public Jobs getJob(String jobId) {
         User user = getCurrentUser();
         Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
@@ -175,7 +167,7 @@ public class JobServiceImpl implements JobService {
         jobRepository.delete(job);
     }
 
-    private User getCurrentUser() {
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));

@@ -2,6 +2,7 @@ package com.example.backend.dto.jobDTO;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Jobs {
+public class Jobs implements Serializable {
 
     private String id;
     private String company;
