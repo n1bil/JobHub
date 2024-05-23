@@ -7,7 +7,6 @@ import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
 import com.example.backend.entity.Job;
 import com.example.backend.entity.User;
-import com.example.backend.exception.NotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.AuthRepository;
 import com.example.backend.service.UserService;
@@ -16,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -55,6 +55,8 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    @Cacheable(value = "users", key = "#root.target.getCurrentAuthUser().id")
     public UserResponseDTO getCurrentUser() {
         User user = getCurrentAuthUser();
 
@@ -92,6 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "applicationStatsCache", key = "'applicationStats'", unless = "#result == null")
     public UsersJobsResponse getApplicationStats() {
         long userCount = mongoTemplate.count(new Query(), User.class);
         long jobCount = mongoTemplate.count(new Query(), Job.class);
@@ -104,6 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "stats", key = "#root.target.getCurrentAuthUser().id")
     public StatsResponseDTO showStats() {
         User user = getCurrentAuthUser();
 
@@ -152,11 +156,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private User getCurrentAuthUser() {
+    public User getCurrentAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        return authRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
+        return authRepository.findByEmail(email)
+                .orElseThrow(() -> new AccessDeniedException("Access denied"));
     }
 
 }
