@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import static com.example.backend.utils.AspectUtils.getArguments;
+
 @Aspect
 @Component
 public class AuthServiceLogger {
@@ -19,14 +21,4 @@ public class AuthServiceLogger {
         logger.info("Arguments: " + getArguments(joinPoint.getArgs()));
     }
 
-    private String getArguments(Object[] args) {
-        StringBuilder arguments = new StringBuilder();
-        for (Object arg : args) {
-            arguments.append(arg).append(", ");
-        }
-        if (arguments.length() > 2) {
-            arguments.setLength(arguments.length() - 2);
-        }
-        return arguments.toString();
-    }
 }
