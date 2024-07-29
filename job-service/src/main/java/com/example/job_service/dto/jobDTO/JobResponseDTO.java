@@ -2,7 +2,7 @@ package com.example.job_service.dto.jobDTO;
 
 import lombok.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -11,8 +11,13 @@ import java.util.List;
 @Builder
 public class JobResponseDTO {
 
-    private long totalJobs;
-    private int numOfPages;
-    private int currentPage;
-    private List<Jobs> jobs;
+    private String id;
+    private String company;
+    private String position;
+    private String jobStatus;
+    private String jobType;
+    private String jobLocation;
+//    private String createdBy;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

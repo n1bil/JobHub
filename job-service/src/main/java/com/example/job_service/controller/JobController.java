@@ -1,8 +1,8 @@
 package com.example.job_service.controller;
 
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
+import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
-import com.example.job_service.dto.jobDTO.Jobs;
 import com.example.job_service.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/jobs")
 @ResponseStatus(HttpStatus.CREATED)
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+@RequiredArgsConstructor
 public class JobController {
 
     private static final Logger logger = LoggerFactory.getLogger(JobController.class);
@@ -30,13 +29,13 @@ public class JobController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs")
     @SecurityRequirement(name = "Bear Authentication")
     @GetMapping()
-    public ResponseEntity<JobResponseDTO> getJobs(@RequestParam(value = "search", required = false) String search,
-                                                  @RequestParam(value = "jobStatus", required = false) String jobStatus,
-                                                  @RequestParam(value = "jobType", required = false) String jobType,
-                                                  @RequestParam(defaultValue = "newest") String sort,
-                                                  @RequestParam(defaultValue = "1") int page,
-                                                  @RequestParam(defaultValue = "10") int limit) {
-        JobResponseDTO allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort, page, limit);
+    public ResponseEntity<JobsResponseDTO> getJobs(@RequestParam(value = "search", required = false) String search,
+                                                   @RequestParam(value = "jobStatus", required = false) String jobStatus,
+                                                   @RequestParam(value = "jobType", required = false) String jobType,
+                                                   @RequestParam(defaultValue = "newest") String sort,
+                                                   @RequestParam(defaultValue = "1") int page,
+                                                   @RequestParam(defaultValue = "10") int limit) {
+        JobsResponseDTO allJobs = jobService.getAllJobsByUser(search, jobStatus, jobType, sort, page, limit);
         logger.info("Retrieved all jobs. Total count: {}", allJobs.getJobs().size());
 
         return ResponseEntity.ok(allJobs);
@@ -47,8 +46,8 @@ public class JobController {
     @ApiResponse(responseCode = "400", description = "Invalid input")
     @SecurityRequirement(name = "Bear Authentication")
     @PostMapping()
-    public ResponseEntity<Jobs> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
-        Jobs createdJob = jobService.createJob(jobRequest);
+    public ResponseEntity<JobResponseDTO> addJob(@Valid @RequestBody JobCreateRequestDTO jobRequest) {
+        JobResponseDTO createdJob = jobService.createJob(jobRequest);
         logger.info("Created job with ID: {}", createdJob.getId());
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);

@@ -1,13 +1,14 @@
 package com.example.job_service.service.impl;
 
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
+import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
-import com.example.job_service.dto.jobDTO.Jobs;
 import com.example.job_service.entity.Job;
 import com.example.job_service.mapper.JobMapper;
 import com.example.job_service.repository.JobRepository;
 import com.example.job_service.service.JobService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JobServiceImpl implements JobService {
 
     private final JobRepository jobRepository;
@@ -27,18 +27,19 @@ public class JobServiceImpl implements JobService {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public Jobs createJob(JobCreateRequestDTO jobRequestDTO) {
+    public JobResponseDTO createJob(JobCreateRequestDTO jobRequestDTO) {
 
         Job job = jobMapper.mapToJob(jobRequestDTO);
         Job savedJob = jobRepository.save(job);
+        log.info("Job {} is saved", job.getId());
 
         return jobMapper.mapToJobResponseDTO(savedJob);
     }
 
     @Override
 //    @Cacheable(value = "userJobs", key = "{#search, #jobStatus, #jobType, #sort, #page, #limit}")
-    public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
-        List<Jobs> jobs;
+    public JobsResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
+        List<JobResponseDTO> jobs;
         long totalJobs;
         int numOfPages;
 
@@ -108,7 +109,7 @@ public class JobServiceImpl implements JobService {
 
          */
 
-        return new JobResponseDTO(totalJobs, numOfPages, page, jobs);
+        return new JobsResponseDTO(totalJobs, numOfPages, page, jobs);
 
     }
 
