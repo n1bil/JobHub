@@ -3,7 +3,9 @@ package com.example.job_service.mapper;
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
 import com.example.job_service.entity.Job;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JobMapper {
 
     public Job mapToJob(JobCreateRequestDTO jobRequestDTO) {
