@@ -1,6 +1,7 @@
 package com.example.job_service;
 
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
+import com.example.job_service.repository.JobRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -31,6 +34,9 @@ class JobServiceApplicationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JobRepository jobRepository;
+
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
         dynamicPropertyRegistry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
@@ -46,6 +52,8 @@ class JobServiceApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jobRequestString))
                 .andExpect(status().isCreated());
+
+        assertEquals(1, jobRepository.findAll().size());
     }
 
     private JobCreateRequestDTO getJobRequest() {
