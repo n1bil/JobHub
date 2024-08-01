@@ -120,21 +120,20 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Mono<UsersJobsCountResponse> getApplicationStats() {
-        Mono<UsersCountResponse> usersCountResponseMono = webClient.get()
+    public UsersJobsCountResponse getApplicationStats() {
+        UsersCountResponse usersCountResponse = webClient.get()
                 .uri("http://localhost:8081/api/v1/admin/app-userstats")
                 .retrieve()
-                .bodyToMono(UsersCountResponse.class);
+                .bodyToMono(UsersCountResponse.class)
+                .block();
 
         long jobCount = mongoTemplate.count(new Query(), Job.class);
 
-        return usersCountResponseMono.map(usersCountResponse -> {
-            UsersJobsCountResponse usersJobsResponse = new UsersJobsCountResponse();
-            usersJobsResponse.setUsers(usersCountResponse.getUsers());
-            usersJobsResponse.setJobs(jobCount);
+        UsersJobsCountResponse usersJobsResponse = new UsersJobsCountResponse();
+        usersJobsResponse.setUsers(usersCountResponse != null ? usersCountResponse.getUsers() : 0);
+        usersJobsResponse.setJobs(jobCount);
 
-            return usersJobsResponse;
-        });
+        return usersJobsResponse;
     }
 
     /*

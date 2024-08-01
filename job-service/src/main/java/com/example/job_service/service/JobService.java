@@ -18,6 +18,6 @@ public interface JobService {
 //
 //    void deleteJobById(String jobId);
 
-    Mono<UsersJobsCountResponse> getApplicationStats();
+    UsersJobsCountResponse getApplicationStats();
 
 }

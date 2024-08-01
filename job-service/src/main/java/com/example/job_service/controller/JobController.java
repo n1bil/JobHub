@@ -57,9 +57,9 @@ public class JobController {
 
     @GetMapping("/admin/app-stats")
     public ResponseEntity<UsersJobsCountResponse> getUsersJobsCount() {
-        Mono<UsersJobsCountResponse> applicationStats = jobService.getApplicationStats();
+        UsersJobsCountResponse applicationStats = jobService.getApplicationStats();
 
-        return ResponseEntity.ok(applicationStats.block());
+        return ResponseEntity.ok(applicationStats);
     }
 
     /*
