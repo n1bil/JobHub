@@ -17,6 +17,7 @@
 
 	<modules>
 		<module>job-service</module>
+		<module>user-service</module>
 	</modules>
 
 	<properties>

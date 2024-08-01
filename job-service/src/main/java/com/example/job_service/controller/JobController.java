@@ -1,5 +1,6 @@
 package com.example.job_service.controller;
 
+import com.example.job_service.dto.UsersJobsCountResponse;
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
 import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/jobs")
@@ -51,6 +53,13 @@ public class JobController {
         logger.info("Created job with ID: {}", createdJob.getId());
 
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/app-stats")
+    public ResponseEntity<UsersJobsCountResponse> getUsersJobsCount() {
+        Mono<UsersJobsCountResponse> applicationStats = jobService.getApplicationStats();
+
+        return ResponseEntity.ok(applicationStats.block());
     }
 
     /*

@@ -7,8 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UsersJobsResponse {
+public class UsersCountResponse {
 
     private Long users;
-    private Long jobs;
 }

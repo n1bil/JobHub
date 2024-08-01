@@ -1,5 +1,7 @@
 package com.example.job_service.service.impl;
 
+import com.example.job_service.dto.UsersCountResponse;
+import com.example.job_service.dto.UsersJobsCountResponse;
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
 import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
@@ -13,8 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -113,6 +117,24 @@ public class JobServiceImpl implements JobService {
 
         return new JobsResponseDTO(totalJobs, numOfPages, page, jobs);
 
+    }
+
+    @Override
+    public Mono<UsersJobsCountResponse> getApplicationStats() {
+        Mono<UsersCountResponse> usersCountResponseMono = webClient.get()
+                .uri("http://localhost:8081/api/v1/admin/app-userstats")
+                .retrieve()
+                .bodyToMono(UsersCountResponse.class);
+
+        long jobCount = mongoTemplate.count(new Query(), Job.class);
+
+        return usersCountResponseMono.map(usersCountResponse -> {
+            UsersJobsCountResponse usersJobsResponse = new UsersJobsCountResponse();
+            usersJobsResponse.setUsers(usersCountResponse.getUsers());
+            usersJobsResponse.setJobs(jobCount);
+
+            return usersJobsResponse;
+        });
     }
 
     /*
