@@ -30,7 +30,7 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final JobMapper jobMapper;
     private final MongoTemplate mongoTemplate;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     @Override
     public JobResponseDTO createJob(JobCreateRequestDTO jobRequestDTO) {
@@ -121,8 +121,8 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public UsersJobsCountResponse getApplicationStats() {
-        UsersCountResponse usersCountResponse = webClient.get()
-                .uri("http://localhost:8081/api/v1/admin/app-userstats")
+        UsersCountResponse usersCountResponse = webClientBuilder.build().get()
+                .uri("http://user-service/api/v1/admin/app-userstats")
                 .retrieve()
                 .bodyToMono(UsersCountResponse.class)
                 .block();
