@@ -3,9 +3,11 @@ package com.example.job_service.service.impl;
 import com.example.job_service.dto.UsersCountResponse;
 import com.example.job_service.dto.UsersJobsCountResponse;
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
+import com.example.job_service.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
 import com.example.job_service.entity.Job;
+import com.example.job_service.exception.NotFoundException;
 import com.example.job_service.mapper.JobMapper;
 import com.example.job_service.repository.JobRepository;
 import com.example.job_service.service.JobService;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -136,23 +139,24 @@ public class JobServiceImpl implements JobService {
         return usersJobsResponse;
     }
 
-    /*
+
     @Override
-    @Cacheable(value = "jobs", key = "#jobId")
-    public Jobs getJob(String jobId) {
-        User user = getCurrentUser();
+//    @Cacheable(value = "jobs", key = "#jobId")
+    public JobResponseDTO getJob(String jobId) {
+//        User user = getCurrentUser();
         Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
-        if (user.getId().equals(foundJob.getCreatedBy().getId())) {
+//        if (user.getId().equals(foundJob.getCreatedBy().getId())) {
             return jobMapper.mapToJobResponseDTO(foundJob);
-        } else {
-            throw new AccessDeniedException("You do not have permission to access this job");
-        }
+//        } else {
+//            throw new AccessDeniedException("You do not have permission to access this job");
+//        }
     }
 
+
     @Override
-    public Jobs updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
-        getCurrentUser();
+    public JobResponseDTO updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
+//        getCurrentUser();
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         job.setCompany(requestJob.getCompany());
@@ -168,17 +172,16 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void deleteJobById(String jobId) {
-        getCurrentUser();
+//        getCurrentUser();
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         jobRepository.delete(job);
     }
 
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return userRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
-    }
+//    public User getCurrentUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String email = authentication.getName();
+//        return userRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
+//    }
 
-     */
 }

@@ -2,6 +2,7 @@ package com.example.job_service.controller;
 
 import com.example.job_service.dto.UsersJobsCountResponse;
 import com.example.job_service.dto.jobDTO.JobCreateRequestDTO;
+import com.example.job_service.dto.jobDTO.JobUpdateRequestDTO;
 import com.example.job_service.dto.jobDTO.JobsResponseDTO;
 import com.example.job_service.dto.jobDTO.JobResponseDTO;
 import com.example.job_service.service.JobService;
@@ -62,14 +63,14 @@ public class JobController {
         return ResponseEntity.ok(applicationStats);
     }
 
-    /*
+
     @Operation(summary = "Get job by ID", description = "Get job details by its ID from the database")
     @ApiResponse(responseCode = "200", description = "Job details retrieved successfully")
     @ApiResponse(responseCode = "404", description = "Job with the provided ID not found")
     @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/{job_id}")
-    public ResponseEntity<Jobs> getJobById(@PathVariable String job_id) {
-        Jobs receivedJob = jobService.getJob(job_id);
+    public ResponseEntity<JobResponseDTO> getJobById(@PathVariable String job_id) {
+        JobResponseDTO receivedJob = jobService.getJob(job_id);
 
         if (receivedJob != null) {
             logger.info("Retrieved job with ID: {}", job_id);
@@ -80,15 +81,17 @@ public class JobController {
         }
     }
 
+
+
     @Operation(summary = "Update a job by ID", description = "Update an existing job by its ID")
     @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK")
     @ApiResponse(responseCode = "404", description = "Job not found")
     @ApiResponse(responseCode = "400", description = "Bad request")
     @SecurityRequirement(name = "Bear Authentication")
     @PutMapping("/{job_id}")
-    public ResponseEntity<Jobs> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
+    public ResponseEntity<JobResponseDTO> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
                                             @PathVariable String job_id) {
-        Jobs jobResponseDTO = jobService.updateJobById(requestJob, job_id);
+        JobResponseDTO jobResponseDTO = jobService.updateJobById(requestJob, job_id);
         logger.info("Updated job with ID: {}", job_id);
 
         return new ResponseEntity<>(jobResponseDTO, HttpStatus.OK);
@@ -105,7 +108,5 @@ public class JobController {
 
         return new ResponseEntity<>("Job entity was deleted successfully", HttpStatus.OK);
     }
-
-     */
 
 }
