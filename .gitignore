@@ -18,7 +18,6 @@ src/assets
 .vscode/*
 !.vscode/extensions.json
 .idea
-docker-compose.yml
 .DS_Store
 *.suo
 *.ntvs*

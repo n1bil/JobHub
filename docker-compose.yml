@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: my-frontend-image:latest
+    ports:
+      - "80:80"
+    container_name: frontend-container
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: my-backend-image:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    container_name: backend-container
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    container_name: redis-container
+
+volumes:
+  backend_data:
