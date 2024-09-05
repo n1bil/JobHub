@@ -1,4 +1,4 @@
-package com.example.user_service.entity;
+package com.example.apigateway.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

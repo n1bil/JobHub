@@ -1,4 +1,4 @@
-package com.example.backend.dto.AuthDTO;
+package com.example.apigateway.dto;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.example.user_service.exception;
+package com.example.apigateway.exception;
 
 public class NotFoundException extends RuntimeException {
 
