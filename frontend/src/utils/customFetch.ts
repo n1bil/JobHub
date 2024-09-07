@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const customFetch = axios.create({
-    baseURL: 'https://backend-6hkg.onrender.com/api/v1',
+    baseURL: 'http://localhost:8081/api/v1',
     withCredentials: true
 })
 

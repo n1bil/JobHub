@@ -63,7 +63,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Cacheable(value = "userJobs", key = "{#search, #jobStatus, #jobType, #sort, #page, #limit}")
+//    @Cacheable(value = "userJobs", key = "{#search, #jobStatus, #jobType, #sort, #page, #limit}")
     public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
         User user = getCurrentUser();
 
@@ -131,7 +131,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Cacheable(value = "jobs", key = "#jobId")
+//    @Cacheable(value = "jobs", key = "#jobId")
     public Jobs getJob(String jobId) {
         User user = getCurrentUser();
         Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));

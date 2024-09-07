@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "users", key = "#root.target.getCurrentAuthUser().id")
+//    @Cacheable(value = "users", key = "#root.target.getCurrentAuthUser().id")
     public UserResponseDTO getCurrentUser() {
         User user = getCurrentAuthUser();
 
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "applicationStatsCache", key = "'applicationStats'", unless = "#result == null")
+//    @Cacheable(value = "applicationStatsCache", key = "'applicationStats'", unless = "#result == null")
     public UsersJobsResponse getApplicationStats() {
         long userCount = mongoTemplate.count(new Query(), User.class);
         long jobCount = mongoTemplate.count(new Query(), Job.class);
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "stats", key = "#root.target.getCurrentAuthUser().id")
+//    @Cacheable(value = "stats", key = "#root.target.getCurrentAuthUser().id")
     public StatsResponseDTO showStats() {
         User user = getCurrentAuthUser();
 
