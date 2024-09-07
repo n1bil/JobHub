@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: my-frontend-image:latest
     ports:
-      - "80:80"
+      - "5173:80"
     container_name: frontend-container
 
   backend:
@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     image: my-backend-image:latest
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_REDIS_HOST=redis
