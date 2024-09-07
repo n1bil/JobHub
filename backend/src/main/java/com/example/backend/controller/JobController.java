@@ -77,7 +77,6 @@ public class JobController {
     @ApiResponse(responseCode = "404", description = "Job not found")
     @ApiResponse(responseCode = "400", description = "Bad request")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('role')")
     @PutMapping("/{job_id}")
     public ResponseEntity<Jobs> editJobById(@Valid @RequestBody JobUpdateRequestDTO requestJob,
                                             @PathVariable String job_id) {
@@ -91,7 +90,6 @@ public class JobController {
     @ApiResponse(responseCode = "200", description = "HTTP Status 200 OK")
     @ApiResponse(responseCode = "404", description = "Job not found")
     @SecurityRequirement(name = "Bear Authentication")
-    @PreAuthorize("hasRole('role')")
     @DeleteMapping("/{job_id}")
     public ResponseEntity<String> deleteJobById(@PathVariable String job_id) {
         jobService.deleteJobById(job_id);
