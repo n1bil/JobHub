@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 //    @Cacheable(value = "users", key = "#root.target.getCurrentAuthUser().id")
     public UserResponseDTO getCurrentUser() {
         User user = getCurrentAuthUser();
+        System.out.println(user.getUsername());
 
         return userMapper.mapToResponseDTO(user);
     }
@@ -155,13 +156,22 @@ public class UserServiceImpl implements UserService {
         return responseDTO;
     }
 
-
     public User getCurrentAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
 
-        return authRepository.findByEmail(email)
-                .orElseThrow(() -> new AccessDeniedException("Access denied"));
+        if (authentication != null && authentication.isAuthenticated()) {
+            return (User) authentication.getPrincipal();
+        }
+
+        return null;
     }
+
+//    public User getCurrentAuthUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String email = authentication.getName();
+//
+//        return authRepository.findByEmail(email)
+//                .orElseThrow(() -> new AccessDeniedException("Access denied"));
+//    }
 
 }

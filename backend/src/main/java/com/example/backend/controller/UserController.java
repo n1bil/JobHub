@@ -4,6 +4,8 @@ import com.example.backend.dto.UsersJobsResponse;
 import com.example.backend.dto.userDTO.StatsResponseDTO;
 import com.example.backend.dto.userDTO.UserResponseDTO;
 import com.example.backend.dto.userDTO.UserUpdateRequestDTO;
+import com.example.backend.entity.User;
+import com.example.backend.mapper.UserMapper;
 import com.example.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,23 +26,33 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private UserService userService;
+    private UserMapper userMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
-    @Operation(summary = "Get current user details", description = "Retrieve details of the currently authenticated user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Current user details retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    @GetMapping("/users/current-user")
-    public ResponseEntity<UserResponseDTO> getCurrentUser() {
-        UserResponseDTO currentUser = userService.getCurrentUser();
-        logger.info("Retrieved current user: {}", currentUser.getName());
+//    @Operation(summary = "Get current user details", description = "Retrieve details of the currently authenticated user")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Current user details retrieved successfully"),
+//            @ApiResponse(responseCode = "401", description = "Unauthorized")
+//    })
+//    @GetMapping("/users/current-user")
+//    public ResponseEntity<UserResponseDTO> getCurrentUser() {
+//        UserResponseDTO currentUser = userService.getCurrentUser();
+//        logger.info("Retrieved current user: {}", currentUser.getName());
+//
+//        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+//    }
 
-        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+    @GetMapping("/users/current-user")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(@AuthenticationPrincipal User currentUser) {
+        UserResponseDTO userResponseDTO = userMapper.mapToResponseDTO(currentUser);
+        logger.info("Retrieved current user: {}", userResponseDTO.getName());
+
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Update user profile", description = "Update user profile details including avatar")

@@ -53,7 +53,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Jobs createJob(JobCreateRequestDTO jobRequestDTO) {
-        User user = getCurrentUser();
+        User user = getCurrentAuthUser();
 
         Job job = jobMapper.mapToJob(jobRequestDTO);
         job.setCreatedBy(user);
@@ -65,7 +65,7 @@ public class JobServiceImpl implements JobService {
     @Override
 //    @Cacheable(value = "userJobs", key = "{#search, #jobStatus, #jobType, #sort, #page, #limit}")
     public JobResponseDTO getAllJobsByUser(String search, String jobStatus, String jobType, String sort, int page, int limit) {
-        User user = getCurrentUser();
+        User user = getCurrentAuthUser();
 
         List<Jobs> jobs;
         long totalJobs;
@@ -133,7 +133,7 @@ public class JobServiceImpl implements JobService {
     @Override
 //    @Cacheable(value = "jobs", key = "#jobId")
     public Jobs getJob(String jobId) {
-        User user = getCurrentUser();
+        User user = getCurrentAuthUser();
         Job foundJob = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         if (user.getId().equals(foundJob.getCreatedBy().getId())) {
@@ -145,7 +145,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Jobs updateJobById(JobUpdateRequestDTO requestJob, String jobId) {
-        getCurrentUser();
+        getCurrentAuthUser();
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         job.setCompany(requestJob.getCompany());
@@ -161,15 +161,19 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void deleteJobById(String jobId) {
-        getCurrentUser();
+        getCurrentAuthUser();
         Job job = jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Invalid id"));
 
         jobRepository.delete(job);
     }
 
-    public User getCurrentUser() {
+    public User getCurrentAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return userRepository.findByEmail(email).orElseThrow(() -> new AccessDeniedException("Access denied"));
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return (User) authentication.getPrincipal();
+        }
+
+        return null;
     }
 }
