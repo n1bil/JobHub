@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${admin.email}")
     private String email;
-    private AuthRepository userRepository;
+    private AuthRepository authRepository;
     private UserMapper userMapper;
     private AuthenticationManager authenticationManager;
     private JwtTokenProvider jwtTokenProvider;
@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     public AuthServiceImpl(AuthRepository userRepository, UserMapper userMapper,
                            AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
+        this.authRepository = userRepository;
         this.userMapper = userMapper;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO register(UserRequestDTO userRequest) {
-        if (userRepository.existsUserByEmail(userRequest.getEmail())) {
+        if (authRepository.existsUserByEmail(userRequest.getEmail())) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
@@ -48,20 +48,21 @@ public class AuthServiceImpl implements AuthService {
             user.setRole("admin");
         }
 
-        userRepository.save(user);
+        authRepository.save(user);
 
         return userMapper.mapToResponseDTO(user);
     }
 
     @Override
     public AuthResponseDTO login(AuthRequestDTO authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequest.getEmail(), authRequest.getPassword()
         ));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenProvider.generateToken(authentication);
-
+        User foundUser = authRepository.findByEmail(authRequest.getEmail())
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found with email: " + email));
+        String token = jwtTokenProvider.generateToken(foundUser);
 
         AuthResponseDTO jwtAuthResponse = new AuthResponseDTO();
         jwtAuthResponse.setAccessToken(token);
